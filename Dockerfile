@@ -8,7 +8,7 @@ RUN mkdir /var/lib/budgetserver
 RUN mkdir /var/lib/exchange
 WORKDIR /var/lib/budgetserver/
 ADD build/libs/budgetExchange-0.0.1-SNAPSHOT.jar /var/lib/budgetserver/budgetexchange.jar
-ADD scripts/budgetExchange.sh /var/lib/budgetserver/budgetExchange.sh
-RUN chmod 777 /var/lib/budgetserver/budgetExchange.sh
-RUN dos2unix /var/lib/budgetserver/budgetExchange.sh
+ADD scripts/budgetExchange.sh /var/lib/budgetserver/budgetexchange.sh
+RUN chmod 777 /var/lib/budgetserver/budgetexchange.sh
+RUN dos2unix /var/lib/budgetserver/budgetexchange.sh
 ENTRYPOINT ["/var/lib/budgetserver/budgetExchange.sh"]
