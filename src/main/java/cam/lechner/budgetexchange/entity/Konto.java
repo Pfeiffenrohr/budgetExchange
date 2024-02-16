@@ -1,4 +1,4 @@
-package cam.lechner.newcbudgetbatch.entity;
+package cam.lechner.budgetexchange.entity;
 
 
 import lombok.Getter;

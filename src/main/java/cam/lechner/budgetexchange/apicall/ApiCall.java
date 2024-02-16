@@ -1,10 +1,11 @@
-package cam.lechner.newcbudgetbatch.apicall;
+package cam.lechner.budgetexchange.apicall;
 
-import cam.lechner.newcbudgetbatch.cospend.Ocs;
-import cam.lechner.newcbudgetbatch.entity.ForecastWeights;
-import cam.lechner.newcbudgetbatch.entity.Kategorie;
-import cam.lechner.newcbudgetbatch.entity.Konto;
-import cam.lechner.newcbudgetbatch.entity.Transaktion;
+import cam.lechner.budgetexchange.cospend.Ocs;
+import cam.lechner.budgetexchange.cospend.BillRespond;
+import cam.lechner.budgetexchange.cospend.SendBill;
+import cam.lechner.budgetexchange.entity.Kategorie;
+import cam.lechner.budgetexchange.entity.Konto;
+import cam.lechner.budgetexchange.entity.Transaktion;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -69,13 +71,13 @@ public class ApiCall {
         }
         return list;
     }
-    public List<Transaktion> getTransactionWithCategory(int category) {
+    public List<Transaktion> getTransactionWithCategoryAndDate(String category, String startdate, String enddate) {
         LOG.info("Start Downloading all Categories");
         if (host == null ) {host = "localhost";}
         if (port == null ) {port = "8092";}
         List<Transaktion> list = new ArrayList<Transaktion>();
         UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("http").host(host).port(port)
-                .path("//transaction_by_kategorie//"+category).build();
+                .path("//transactionWithDateAndCategory").query("startdate="+startdate).query("enddate="+enddate).query("category="+category).build();
         String transactions = uriComponents.toUriString();
         ResponseEntity<Transaktion[]> response = restTemplate.getForEntity(transactions, Transaktion[].class);
         if (response.hasBody()) {
@@ -85,7 +87,7 @@ public class ApiCall {
         return list;
     }
 
-    public Ocs getAllBills(RestTemplate restTemplate) {
+    public BillRespond getAllBills(RestTemplate restTemplate) {
         LOG.info("Start getAllBillsFromCospend");
         if (host == null ) {host = "localhost";}
         if (port == null ) {port = "8092";}
@@ -96,14 +98,33 @@ public class ApiCall {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", authHeader);
         headers.add("OCS-APIRequest","true");
-
-
         HttpEntity<String> request = new HttpEntity<String>(headers);
         UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("richardlechner.spdns.de")
                 .path("/ocs/v2.php/apps/cospend/api/v1/projects/test2/bills").build();
         String url = uriComponents.toUriString();
-        ResponseEntity<Ocs> response = restTemplate.exchange(url, HttpMethod.GET, request, Ocs.class);
-        Ocs ocs = response.getBody();
-        return ocs;
+        ResponseEntity<BillRespond> response = restTemplate.exchange(url, HttpMethod.GET, request, BillRespond.class);
+        BillRespond billRespond = response.getBody();
+        return billRespond;
+    }
+    public Integer sendBill( MultiValueMap map) {
+        LOG.info("Start sendBillToCospend with bill" + map.get("what"));
+        String plainCreds = "richard:Thierham123";
+        byte[] encodedAuth = Base64.encodeBase64(
+                plainCreds.getBytes(Charset.forName("US-ASCII")),false );
+        String authHeader = "Basic " + new String( encodedAuth );
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", authHeader);
+        headers.add("OCS-APIRequest","true");
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<> (map,headers);
+        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("richardlechner.spdns.de")
+                .path("/ocs/v2.php/apps/cospend/api/v1/projects/test2/bills").build();
+        String url = uriComponents.toUriString();
+        ResponseEntity<String> response = restTemplate.postForEntity(
+                url, request , String.class);
+        String result = response.getBody();
+        String [] chunks  =result.split(":");
+        String [] resp = chunks[6].split("}");
+        LOG.info("Bill "+map.get("what")+" succesfully sent");
+        return Integer.parseInt(resp[0]);
     }
 }

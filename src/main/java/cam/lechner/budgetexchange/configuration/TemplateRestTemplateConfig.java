@@ -1,4 +1,4 @@
-package cam.lechner.newcbudgetbatch.configuration;
+package cam.lechner.budgetexchange.configuration;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-@ConditionalOnMissingBean
+@ConditionalOnMissingBean(name = "RestTemplate")
 public class TemplateRestTemplateConfig {
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {

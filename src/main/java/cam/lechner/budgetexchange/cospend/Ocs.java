@@ -1,4 +1,4 @@
-package cam.lechner.newcbudgetbatch.cospend;
+package cam.lechner.budgetexchange.cospend;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

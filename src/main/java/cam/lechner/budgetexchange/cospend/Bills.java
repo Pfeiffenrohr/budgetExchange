@@ -1,4 +1,4 @@
-package cam.lechner.newcbudgetbatch.cospend;
+package cam.lechner.budgetexchange.cospend;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

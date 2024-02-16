@@ -1,4 +1,4 @@
-package cam.lechner.newcbudgetbatch.entity;
+package cam.lechner.budgetexchange.entity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,9 +8,9 @@ import org.springframework.context.annotation.Configuration;
 @Setter
 @Configuration
 public class Transaktion {
+    private int id;
     private String name;
-    private String user;
-    private int konto;
+    private int konto_id;
     private int kategorie;
     private String partner;
     private String beschreibung;

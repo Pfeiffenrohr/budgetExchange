@@ -1,17 +1,19 @@
-package cam.lechner.newcbudgetbatch.apicall;
+package cam.lechner.budgetexchange.apicall;
 
-import cam.lechner.newcbudgetbatch.entity.Kategorie;
-import cam.lechner.newcbudgetbatch.entity.Konto;
+import cam.lechner.budgetexchange.cospend.SendBill;
+import cam.lechner.budgetexchange.entity.Kategorie;
+import cam.lechner.budgetexchange.entity.Konto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -68,6 +70,29 @@ public class ApiCallTest {
         ApiCall apiCall = new ApiCall();
         apiCall.getAllBills(restTemplate1);
     }
+
+   /* @Test
+    void sendBillToCospend() {
+        //   RestTemplate restTemplate = Mockito.mock(RestTemplate.class);
+        RestTemplate restTemplate1 = new RestTemplate();
+        MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
+        ApiCall apiCall = new ApiCall();
+
+        map.add("amount","200.4");
+        map.add("what","APITEST");
+        map.add("payer","11");
+        map.add("repeat","n");
+        map.add("payed_for","12");
+        map.add("date","2024-02-10");
+        SendBill sendBill = new SendBill();
+        sendBill.setAmmount(200.4);
+        sendBill.setPayer(11);
+        sendBill.setWhat("APITEST");
+        sendBill.setRepeat("n");
+        sendBill.setPayed_for(12);
+        sendBill.setDate("2024-02-10");
+        apiCall.sendBill(restTemplate1,map);
+    }*/
 
     @Bean
     public RestTemplate restTemplate() {

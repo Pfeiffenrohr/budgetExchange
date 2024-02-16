@@ -1,4 +1,5 @@
-package cam.lechner.newcbudgetbatch.cospend;
+package cam.lechner.budgetexchange.cospend;
+
 
 public class Meta {
 

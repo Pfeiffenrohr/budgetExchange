@@ -1,6 +1,5 @@
-package cam.lechner.newcbudgetbatch.configuration;
+package cam.lechner.budgetexchange.configuration;
 
-import org.mockito.Mockito;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.web.client.RestTemplateBuilder;
