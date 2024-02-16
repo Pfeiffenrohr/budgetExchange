@@ -11,4 +11,4 @@ ADD build/libs/budgetExchange-0.0.1-SNAPSHOT.jar /var/lib/budgetserver/budgetexc
 ADD scripts/budgetExchange.sh /var/lib/budgetserver/budgetexchange.sh
 RUN chmod 777 /var/lib/budgetserver/budgetexchange.sh
 RUN dos2unix /var/lib/budgetserver/budgetexchange.sh
-ENTRYPOINT ["/var/lib/budgetserver/budgetExchange.sh"]
+ENTRYPOINT ["/var/lib/budgetserver/budgetexchange.sh"]
