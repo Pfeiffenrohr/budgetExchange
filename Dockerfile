@@ -1,6 +1,6 @@
 FROM  eclipse-temurin:17
 # Setup JAVA_HOME -- useful for docker commandline
-ENV JAVA_HOME /opt/java/openjdk/bin/java
+ENV JAVA_HOME /opt/java/openjdk/bin
 RUN export JAVA_HOME
 
 RUN apt-get update && apt-get install -y dos2unix
