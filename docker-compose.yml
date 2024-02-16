@@ -1,5 +1,5 @@
 cbudgetexchange:
-  image: pfeiffenrohr/cbudgetexchange:latest
+  image: pfeiffenrohr/budgetexchange:latest
   restart: always
   environment:
     budgetserverhost: 192.168.188.40
