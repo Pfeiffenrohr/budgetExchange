@@ -1,4 +1,7 @@
 FROM  eclipse-temurin:17
+# Setup JAVA_HOME -- useful for docker commandline
+ENV JAVA_HOME /opt/java/openjdk/bin/java
+RUN export JAVA_HOME
 
 RUN apt-get update && apt-get install -y dos2unix
 RUN mkdir /var/lib/budgetserver
