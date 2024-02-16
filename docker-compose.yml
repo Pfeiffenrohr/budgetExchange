@@ -1,0 +1,6 @@
+cbudgetexchange:
+  image: pfeiffenrohr/cbudgetexchange:latest
+  restart: always
+  environment:
+    budgetserverhost: 192.168.188.40
+    budgetserverport: 8092
