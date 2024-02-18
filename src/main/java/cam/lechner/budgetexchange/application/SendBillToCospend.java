@@ -32,8 +32,10 @@ public class SendBillToCospend {
         List<MapCategory> t = new ArrayList<MapCategory>();
         List<TransactionIds> transIds = new ArrayList<TransactionIds>();
         mapCategoryRepository.findAll().forEach(t::add);
+
         compareRepository.findAll().forEach(transIds::add);
         transIds.forEach( trans -> {
+            //set all isCheked to 0;
             trans.setIsChecked(0);
             compareRepository.save(trans);
 
@@ -53,8 +55,8 @@ public class SendBillToCospend {
                     {
                         continue;
                     }
-                  /*  TransactionIds transactionIds = new TransactionIds();
-                    transactionIds.setBudgetTransId(tr.getId());
+                    TransactionIds  newtransactionIds = new TransactionIds();
+                    newtransactionIds.setBudgetTransId(tr.getId());
                     MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
                     map.add("amount", tr.getWert() * kat.getInout() + "");
                     map.add("what", tr.getName());
@@ -64,14 +66,34 @@ public class SendBillToCospend {
                     map.add("date", tr.getDatum());
                    // map.add("categoryid", mapCategoryRepository.findByBudgetCategory(tr.getKategorie()).getCospendCategory() + "");
                     map.add("categoryid", kat.getCospendCategory()+"");
-                    transactionIds.setNextcloudBillId(apicall.sendBill(map));
-                    compareRepository.save(transactionIds);
-                    transaktionRepository.save(tr);*/
+                    newtransactionIds.setNextcloudBillId(apicall.sendBill(map));
+                    newtransactionIds.setIsChecked(1);
+                    compareRepository.save(newtransactionIds);
+                    transaktionRepository.save(tr);
                 }
                 else {
+
+                   Transaktion storedTrans = transaktionRepository.findById(transactionIds.getBudgetTransId()).orElseThrow();
+                    if (! storedTrans.getName().equals(tr.getName()) ||  storedTrans.getWert() != tr.getWert()  ) {
+                        MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
+                        map.add("amount", tr.getWert() * kat.getInout() + "");
+                        map.add("what", tr.getName());
+                        map.add("payer", payer);
+                        map.add("repeat", "n");
+                        map.add("payed_for", payed_for);
+                        map.add("date", tr.getDatum());
+                        map.add("id", +transactionIds.getNextcloudBillId()+"");
+                        map.add("categoryid", mapCategoryRepository.findByBudgetCategory(tr.getKategorie()).getCospendCategory() + "");
+                        map.add("categoryid", kat.getCospendCategory()+"");
+                        apicall.updateBill(map,"/"+transactionIds.getNextcloudBillId());
+                        transaktionRepository.save(tr);
+
+                    }
                     transactionIds.setIsChecked(1);
                     compareRepository.save(transactionIds);
+
                 }
+
             }
         });
     }

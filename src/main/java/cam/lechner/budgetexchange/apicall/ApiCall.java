@@ -107,7 +107,7 @@ public class ApiCall {
         BillRespond billRespond = response.getBody();
         return billRespond;
     }
-    public Integer sendBill( MultiValueMap map) {
+    public Integer sendBill( MultiValueMap map ) {
         LOG.info("Start sendBillToCospend with bill" + map.get("what"));
         String plainCreds = "richard:Thierham123";
         byte[] encodedAuth = Base64.encodeBase64(
@@ -127,6 +127,29 @@ public class ApiCall {
         String [] resp = chunks[6].split("}");
         LOG.info("Bill "+map.get("what")+" succesfully sent");
         sendMessageToTalk("Neue Rechnung zu Cosepend: "+map.get("what"));
+        return Integer.parseInt(resp[0]);
+    }
+
+    public Integer updateBill( MultiValueMap map,String billId) {
+        LOG.info("Start sendBillToCospend with bill" + map.get("what"));
+        String plainCreds = "richard:Thierham123";
+        byte[] encodedAuth = Base64.encodeBase64(
+                plainCreds.getBytes(Charset.forName("US-ASCII")),false );
+        String authHeader = "Basic " + new String( encodedAuth );
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", authHeader);
+        headers.add("OCS-APIRequest","true");
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<> (map,headers);
+        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("richardlechner.spdns.de")
+                .path("/ocs/v2.php/apps/cospend/api/v1/projects/test2/bills"+billId).build();
+        String url = uriComponents.toUriString();
+        ResponseEntity<String> response = restTemplate.exchange(
+                url, HttpMethod.PUT, request, String.class);
+        String result = response.getBody();
+        String [] chunks  =result.split(":");
+        String [] resp = chunks[6].split("}");
+        LOG.info("Bill "+map.get("what")+" succesfully sent");
+        sendMessageToTalk("Update Rechnung zu Cosepend: "+map.get("what"));
         return Integer.parseInt(resp[0]);
     }
     public void sendMessageToTalk( String msg) {

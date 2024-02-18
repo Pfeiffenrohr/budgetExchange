@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 @Table(name = "transaktion")
 public class Transaktion {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;
     private String name;
     private int konto_id;
