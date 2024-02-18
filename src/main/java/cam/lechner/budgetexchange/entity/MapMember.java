@@ -1,9 +1,6 @@
-package cam.lechner.budgetexchange.compare;
+package cam.lechner.budgetexchange.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +9,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
+@Table(name = "new_map_member")
 public class MapMember {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)

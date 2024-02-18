@@ -1,10 +1,10 @@
-package cam.lechner.budgetexchange.compare;
+package cam.lechner.budgetexchange.application;
 
 import cam.lechner.budgetexchange.apicall.ApiCall;
+import cam.lechner.budgetexchange.entity.MapCategory;
+import cam.lechner.budgetexchange.entity.TransactionIds;
 import cam.lechner.budgetexchange.entity.Transaktion;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -15,30 +15,45 @@ import java.util.Calendar;
 import java.util.List;
 
 @Component
-public class Compare {
+public class SendBillToCospend {
     @Autowired
     private ApiCall apicall;
     @Autowired
     private CompareRepository compareRepository;
 
     @Autowired
+    private TransaktionRepository transaktionRepository;
+
+    @Autowired
     private MapCategoryRepository mapCategoryRepository;
-    public void getMissingTransactions() {
+    public void getMissingTransactionsAndSendToCospend() {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd");
         List<MapCategory> t = new ArrayList<MapCategory>();
+        List<TransactionIds> transIds = new ArrayList<TransactionIds>();
         mapCategoryRepository.findAll().forEach(t::add);
+        compareRepository.findAll().forEach(transIds::add);
+        transIds.forEach( trans -> {
+            trans.setIsChecked(0);
+            compareRepository.save(trans);
+
+        });
+
+        //compareRepository.updateIsChecked(0);
+
         t.forEach( kat -> {
             List<Transaktion> trans = apicall.getTransactionWithCategoryAndDate(kat.getBudgetCategory()+"", "2019-01-01", formater.format(cal.getTime()));
            String payer = getPayer(kat);
            String payed_for = getPayedFor(kat);
             for (Transaktion tr : trans) {
-                if (compareRepository.findByBudgetTransId(tr.getId()) == null) {
+                TransactionIds transactionIds = new TransactionIds();
+                transactionIds= compareRepository.findByBudgetTransId(tr.getId());
+                if ( transactionIds == null) {
                     if (notToCalculate(tr))
                     {
                         continue;
                     }
-                    TransactionIds transactionIds = new TransactionIds();
+                  /*  TransactionIds transactionIds = new TransactionIds();
                     transactionIds.setBudgetTransId(tr.getId());
                     MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
                     map.add("amount", tr.getWert() * kat.getInout() + "");
@@ -50,6 +65,11 @@ public class Compare {
                    // map.add("categoryid", mapCategoryRepository.findByBudgetCategory(tr.getKategorie()).getCospendCategory() + "");
                     map.add("categoryid", kat.getCospendCategory()+"");
                     transactionIds.setNextcloudBillId(apicall.sendBill(map));
+                    compareRepository.save(transactionIds);
+                    transaktionRepository.save(tr);*/
+                }
+                else {
+                    transactionIds.setIsChecked(1);
                     compareRepository.save(transactionIds);
                 }
             }

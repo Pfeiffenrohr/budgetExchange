@@ -1,5 +1,6 @@
-package cam.lechner.budgetexchange.compare;
+package cam.lechner.budgetexchange.application;
 
+import cam.lechner.budgetexchange.entity.MapCategory;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 
