@@ -1,5 +1,6 @@
 package cam.lechner.budgetexchange.entity;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.annotation.Configuration;
@@ -7,7 +8,10 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 @Configuration
+@Entity
+@Table(name = "transaktion")
 public class Transaktion {
+    @Id
     private int id;
     private String name;
     private int konto_id;

@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -25,6 +26,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,10 +42,15 @@ public class ApiCall {
 
     public ApiCall() {
     }
+
     public List<Konto> getAllKonten() {
         LOG.info("Start Downloading all Kontos");
-        if (host == null ) {host = "localhost";}
-        if (port == null ) {port = "8092";}
+        if (host == null) {
+            host = "localhost";
+        }
+        if (port == null) {
+            port = "8092";
+        }
         List<Konto> list = new ArrayList<Konto>();
         UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("http").host(host).port(port)
                 .path("//kontos").build();
@@ -59,8 +66,12 @@ public class ApiCall {
 
     public List<Kategorie> getAllCategories() {
         LOG.info("Start Downloading all Categories");
-        if (host == null ) {host = "localhost";}
-        if (port == null ) {port = "8092";}
+        if (host == null) {
+            host = "localhost";
+        }
+        if (port == null) {
+            port = "8092";
+        }
         List<Kategorie> list = new ArrayList<>();
         UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("http").host(host).port(port)
                 .path("//categories").build();
@@ -72,13 +83,18 @@ public class ApiCall {
         }
         return list;
     }
+
     public List<Transaktion> getTransactionWithCategoryAndDate(String category, String startdate, String enddate) {
         LOG.info("Start Downloading all Categories");
-        if (host == null ) {host = "localhost";}
-        if (port == null ) {port = "8092";}
+        if (host == null) {
+            host = "localhost";
+        }
+        if (port == null) {
+            port = "8092";
+        }
         List<Transaktion> list = new ArrayList<Transaktion>();
         UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("http").host(host).port(port)
-                .path("//transactionWithDateAndCategory").query("startdate="+startdate).query("enddate="+enddate).query("category="+category).build();
+                .path("//transactionWithDateAndCategory").query("startdate=" + startdate).query("enddate=" + enddate).query("category=" + category).build();
         String transactions = uriComponents.toUriString();
         ResponseEntity<Transaktion[]> response = restTemplate.getForEntity(transactions, Transaktion[].class);
         if (response.hasBody()) {
@@ -88,67 +104,123 @@ public class ApiCall {
         return list;
     }
 
-    public BillRespond getAllBills(RestTemplate restTemplate) {
+    public BillRespond getAllBills(RestTemplate restTemplate,String projectId) {
         LOG.info("Start getAllBillsFromCospend");
-        if (host == null ) {host = "localhost";}
-        if (port == null ) {port = "8092";}
+        if (host == null) {
+            host = "localhost";
+        }
+        if (port == null) {
+            port = "8092";
+        }
         String plainCreds = "richard:Thierham123";
         byte[] encodedAuth = Base64.encodeBase64(
-                plainCreds.getBytes(Charset.forName("US-ASCII")),false );
-        String authHeader = "Basic " + new String( encodedAuth );
+                plainCreds.getBytes(Charset.forName("US-ASCII")), false);
+        String authHeader = "Basic " + new String(encodedAuth);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", authHeader);
-        headers.add("OCS-APIRequest","true");
+        headers.add("OCS-APIRequest", "true");
         HttpEntity<String> request = new HttpEntity<String>(headers);
         UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("richardlechner.spdns.de")
-                .path("/ocs/v2.php/apps/cospend/api/v1/projects/test2/bills").build();
+                .path("/ocs/v2.php/apps/cospend/api/v1/projects/"+projectId+"/bills").build();
         String url = uriComponents.toUriString();
         ResponseEntity<BillRespond> response = restTemplate.exchange(url, HttpMethod.GET, request, BillRespond.class);
         BillRespond billRespond = response.getBody();
         return billRespond;
     }
-    public Integer sendBill( MultiValueMap map) {
+
+    public Integer sendBill(MultiValueMap map,String projectId) {
         LOG.info("Start sendBillToCospend with bill" + map.get("what"));
         String plainCreds = "richard:Thierham123";
         byte[] encodedAuth = Base64.encodeBase64(
-                plainCreds.getBytes(Charset.forName("US-ASCII")),false );
-        String authHeader = "Basic " + new String( encodedAuth );
+                plainCreds.getBytes(Charset.forName("US-ASCII")), false);
+        String authHeader = "Basic " + new String(encodedAuth);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", authHeader);
-        headers.add("OCS-APIRequest","true");
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<> (map,headers);
+        headers.add("OCS-APIRequest", "true");
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("richardlechner.spdns.de")
-                .path("/ocs/v2.php/apps/cospend/api/v1/projects/test2/bills").build();
+                .path("/ocs/v2.php/apps/cospend/api/v1/projects/"+projectId+"/bills").build();
         String url = uriComponents.toUriString();
         ResponseEntity<String> response = restTemplate.postForEntity(
-                url, request , String.class);
+                url, request, String.class);
         String result = response.getBody();
-        String [] chunks  =result.split(":");
-        String [] resp = chunks[6].split("}");
-        LOG.info("Bill "+map.get("what")+" succesfully sent");
-        sendMessageToTalk("Neue Rechnung zu Cosepend: "+map.get("what"));
+        String[] chunks = result.split(":");
+        String[] resp = chunks[6].split("}");
+        LOG.info("Bill " + map.get("what") + " succesfully sent");
+        sendMessageToTalk("Neue Rechnung zu Cosepend: " + map.get("what"));
         return Integer.parseInt(resp[0]);
     }
-    public void sendMessageToTalk( String msg) {
+
+    public Integer updateBill(MultiValueMap map, String billId,String projectId) {
+        LOG.info("Update bill" + map.get("what"));
+        String plainCreds = "richard:Thierham123";
+        byte[] encodedAuth = Base64.encodeBase64(
+                plainCreds.getBytes(Charset.forName("US-ASCII")), false);
+        String authHeader = "Basic " + new String(encodedAuth);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", authHeader);
+        headers.add("OCS-APIRequest", "true");
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("richardlechner.spdns.de")
+                .path("/ocs/v2.php/apps/cospend/api/v1/projects/"+projectId+"/bills" + billId).build();
+        String url = uriComponents.toUriString();
+        ResponseEntity<String> response = restTemplate.exchange(
+                url, HttpMethod.PUT, request, String.class);
+        String result = response.getBody();
+        String[] chunks = result.split(":");
+        String[] resp = chunks[6].split("}");
+        LOG.info("Bill " + map.get("what") + " succesfully sent");
+        sendMessageToTalk("Update Rechnung zu Cosepend: " + map.get("what"));
+        return Integer.parseInt(resp[0]);
+    }
+
+    public Boolean deleteBill(String billId, String projectId) {
+        LOG.info("Delete bill in Cospend " + billId);
+        String plainCreds = "richard:Thierham123";
+        byte[] encodedAuth = Base64.encodeBase64(
+                plainCreds.getBytes(Charset.forName("US-ASCII")), false);
+        String authHeader = "Basic " + new String(encodedAuth);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", authHeader);
+        headers.add("OCS-APIRequest", "true");
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(headers);
+        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("richardlechner.spdns.de")
+                .path("/ocs/v2.php/apps/cospend/api/v1/projects/"+projectId+" /bills/" + billId).build();
+        String url = uriComponents.toUriString();
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(
+                    url, HttpMethod.DELETE, request, String.class);
+            String result = response.getBody();
+            LOG.info("Bill deleteted " + billId);
+            sendMessageToTalk("Rechnung gelöscht: " + billId);
+        } catch (final HttpClientErrorException e) {
+            LOG.error("!!!Fehler " + e.getStatusCode().toString());
+            // System.out.println(e.getStatusCode());
+            // System.out.println(e.getResponseBodyAsString());
+            LOG.error(e.getResponseBodyAsString());
+            return false;
+        }
+        return true;
+    }
+
+    public void sendMessageToTalk(String msg) {
         LOG.info("Start sendmessage to talk");
         String plainCreds = "richard:Thierham123";
         byte[] encodedAuth = Base64.encodeBase64(
-                plainCreds.getBytes(Charset.forName("US-ASCII")),false );
-        String authHeader = "Basic " + new String( encodedAuth );
+                plainCreds.getBytes(Charset.forName("US-ASCII")), false);
+        String authHeader = "Basic " + new String(encodedAuth);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", authHeader);
-        headers.add("OCS-APIRequest","true");
+        headers.add("OCS-APIRequest", "true");
         MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
-        map.add("token","wz6hggy5");
-        map.add("message",msg);
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<> (map,headers);
+        map.add("token", "wz6hggy5");
+        map.add("message", msg);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("richardlechner.spdns.de")
                 .path("/ocs/v2.php/apps/spreed/api/v1/chat/kzuuotjy").build();
         String url = uriComponents.toUriString();
         ResponseEntity<String> response = restTemplate.postForEntity(
-                url, request , String.class);
+                url, request, String.class);
         String result = response.getBody();
-
     }
-
 }

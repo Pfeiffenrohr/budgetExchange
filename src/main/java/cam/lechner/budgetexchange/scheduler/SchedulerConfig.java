@@ -67,7 +67,7 @@ public class SchedulerConfig {
     @Bean
     public JobDetailFactoryBean simpleJobDetail() {
         JobDetailFactoryBean factoryBean = new JobDetailFactoryBean();
-        factoryBean.setJobClass(SimpleJob.class);
+        factoryBean.setJobClass(ScheduleSendBillToCospendJob.class);
         factoryBean.setDurability(true);
         return factoryBean;
     }

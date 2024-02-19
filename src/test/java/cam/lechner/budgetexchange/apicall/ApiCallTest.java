@@ -68,7 +68,7 @@ public class ApiCallTest {
         //   RestTemplate restTemplate = Mockito.mock(RestTemplate.class);
         RestTemplate restTemplate1 = new RestTemplate();
         ApiCall apiCall = new ApiCall();
-        apiCall.getAllBills(restTemplate1);
+        apiCall.getAllBills(restTemplate1,"test2");
     }
 
    /* @Test
