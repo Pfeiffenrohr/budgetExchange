@@ -16,4 +16,5 @@ public class TransactionIds {
     private Integer budgetTransId;
     private Integer nextcloudBillId;
     private Integer isChecked;
+    private String  projectId;
 }

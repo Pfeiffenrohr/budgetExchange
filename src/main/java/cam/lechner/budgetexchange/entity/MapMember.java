@@ -16,7 +16,6 @@ public class MapMember {
     private Integer id;
     private Integer cospendMemberId;
     private String name;
-    private Date begindate;
-    private Date enddate;
+    private String project;
 
 }
