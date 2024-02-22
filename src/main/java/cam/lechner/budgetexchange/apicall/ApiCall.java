@@ -85,7 +85,7 @@ public class ApiCall {
     }
 
     public List<Transaktion> getTransactionWithCategoryAndDate(String category, String startdate, String enddate) {
-        LOG.info("Start Downloading all Categories");
+        // LOG.info("Start Downloading all Categories");
         if (host == null) {
             host = "localhost";
         }
