@@ -85,7 +85,6 @@ public class ApiCall {
     }
 
     public List<Transaktion> getTransactionWithCategoryAndDate(String category, String startdate, String enddate) {
-        // LOG.info("Start Downloading all Categories");
         if (host == null) {
             host = "localhost";
         }
@@ -147,7 +146,7 @@ public class ApiCall {
         String[] chunks = result.split(":");
         String[] resp = chunks[6].split("}");
         LOG.info("Bill " + map.get("what") + " succesfully sent");
-        sendMessageToTalk("Neue Rechnung zu Cosepend: " + map.get("what"));
+        sendMessageToTalk("[Cospend]Neue Rechnung zu Cosepend: " + map.get("what"));
         return Integer.parseInt(resp[0]);
     }
 
@@ -170,7 +169,7 @@ public class ApiCall {
         String[] chunks = result.split(":");
         String[] resp = chunks[6].split("}");
         LOG.info("Bill " + map.get("what") + " succesfully sent");
-        sendMessageToTalk("Update Rechnung zu Cosepend: " + map.get("what"));
+        sendMessageToTalk("[Cospend] Update Rechnung zu Cosepend: " + map.get("what"));
         return Integer.parseInt(resp[0]);
     }
 
@@ -192,7 +191,7 @@ public class ApiCall {
                     url, HttpMethod.DELETE, request, String.class);
             String result = response.getBody();
             LOG.info("Bill deleteted " + billId);
-            sendMessageToTalk("Rechnung gelöscht: " + billId);
+            sendMessageToTalk("[Cospend] Rechnung gelöscht: " + billId);
         } catch (final HttpClientErrorException e) {
             LOG.error("!!!Fehler " + e.getStatusCode().toString());
             // System.out.println(e.getStatusCode());
