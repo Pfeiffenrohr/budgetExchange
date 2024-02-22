@@ -65,7 +65,7 @@ public class ApiCall {
     }
 
     public List<Kategorie> getAllCategories() {
-        LOG.info("Start Downloading all Categories");
+        //LOG.info("Start Downloading all Categories");
         if (host == null) {
             host = "localhost";
         }
