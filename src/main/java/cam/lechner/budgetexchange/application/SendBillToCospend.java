@@ -109,7 +109,7 @@ public class SendBillToCospend {
                 }
             } catch (Exception e ) {
                 LOG.error(" Exception " +e);
-                apicall.sendMessageToTalk("[Cospend] !!!! Fehler  +e");
+                apicall.sendMessageToTalk("@richard [Cospend] !!!! Fehler  +e");
                 errorOccured[0] = true;
             }
         });
