@@ -70,6 +70,7 @@ public class SendBillToCospend {
                         MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
                         map.add("amount", tr.getWert() * kat.getInout() + "");
                         map.add("what", tr.getName());
+                        map.add("comment", tr.getBeschreibung());
                         map.add("payer", payer);
                         map.add("repeat", "n");
                         map.add("payed_for", payed_for);
@@ -84,10 +85,13 @@ public class SendBillToCospend {
                     } else {
 
                         Transaktion storedTrans = transaktionRepository.findById(transactionIds.getBudgetTransId()).orElseThrow();
-                        if (!storedTrans.getName().equals(tr.getName()) || storedTrans.getWert() != tr.getWert()) {
+                        if (!storedTrans.getName().equals(tr.getName())
+                                || storedTrans.getWert() != tr.getWert()
+                                || ! storedTrans.getBeschreibung().equals(tr.getBeschreibung())) {
                             MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
                             map.add("amount", tr.getWert() * kat.getInout() + "");
                             map.add("what", tr.getName());
+                            map.add("comment",tr.getBeschreibung());
                             map.add("payer", payer);
                             map.add("repeat", "n");
                             map.add("payed_for", payed_for);
@@ -105,7 +109,7 @@ public class SendBillToCospend {
                 }
             } catch (Exception e ) {
                 LOG.error(" Exception " +e);
-                apicall.sendMessageToTalk("[Cospend] !!!! Fehler  +e");
+                apicall.sendMessageToTalk("@richard [Cospend] !!!! Fehler  +e");
                 errorOccured[0] = true;
             }
         });
