@@ -137,7 +137,7 @@ public class SendBillToCospend {
         }
         if (map.getKind() == 1) {
             //Reperaturen
-            return mapMemberRepository.findByNameAndProject("Hausverwaltung",map.getProjectname()).getCospendMemberId()+"";
+            return mapMemberRepository.findByNameAndProject("Richard",map.getProjectname()).getCospendMemberId()+"";
            // return "58";
         }
         return "";
@@ -209,7 +209,7 @@ public class SendBillToCospend {
         }
         if (map.getKind() == 1) {
             //Reperaturen
-            return mapMemberRepository.findByNameAndProject("Richard",map.getProjectname()).getCospendMemberId()+"";
+            return mapMemberRepository.findByNameAndProject("Hausverwaltung",map.getProjectname()).getCospendMemberId()+"";
             //return "9";
         }
         return "";
