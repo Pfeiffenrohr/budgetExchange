@@ -148,8 +148,13 @@ public class SendBillToCospend {
             && trans.getKategorie() != 39
                 && trans.getKategorie() != 139
                 && trans.getKategorie() != 142
+                && trans.getKategorie() != 155
                 && trans.getKategorie() != 71) {
             return false;
+        }
+        if (trans.getKategorie()== 155  && trans.getKonto_id()  == 92) {
+            //Alles was Kategorie Ahornstrasse 39 ist und Konto Haus Ahornstr. 39
+            return true;
         }
         if (trans.getKategorie()== 139  && trans.getKonto_id() != 32) {
             return true;
