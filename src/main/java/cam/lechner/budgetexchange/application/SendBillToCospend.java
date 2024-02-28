@@ -214,7 +214,7 @@ public class SendBillToCospend {
         }
         if (map.getKind() == 1) {
             //Reperaturen
-            return mapMemberRepository.findByNameAndProject("Hausverwaltung",map.getProjectname()).getCospendMemberId()+"";
+            return mapMemberRepository.findByNameAndProject("Mieter",map.getProjectname()).getCospendMemberId()+"";
             //return "9";
         }
         return "";
