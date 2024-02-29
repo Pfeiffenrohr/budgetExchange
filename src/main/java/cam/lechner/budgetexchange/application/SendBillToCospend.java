@@ -140,6 +140,11 @@ public class SendBillToCospend {
             return mapMemberRepository.findByNameAndProject("Richard",map.getProjectname()).getCospendMemberId()+"";
            // return "58";
         }
+        if (map.getKind() == 3) {
+            //Reperaturen
+            return mapMemberRepository.findByNameAndProject("Hausverwaltung",map.getProjectname()).getCospendMemberId()+"";
+            // return "58";
+        }
         return "";
     }
 
@@ -149,8 +154,13 @@ public class SendBillToCospend {
                 && trans.getKategorie() != 139
                 && trans.getKategorie() != 142
                 && trans.getKategorie() != 155
+                && trans.getKategorie() != 158
                 && trans.getKategorie() != 71) {
             return false;
+        }
+        if (trans.getKategorie()== 158  &&  trans.getKonto_id()  != 32) {
+            //Alles was Kategorie Rücklagen ist und nocht Konto Sprkasse Giro 2
+            return true;
         }
         if (trans.getKategorie()== 155  && trans.getKonto_id()  == 92) {
             //Alles was Kategorie Ahornstrasse 39 ist und Konto Haus Ahornstr. 39
@@ -215,6 +225,11 @@ public class SendBillToCospend {
         if (map.getKind() == 1) {
             //Reperaturen
             return mapMemberRepository.findByNameAndProject("Mieter",map.getProjectname()).getCospendMemberId()+"";
+            //return "9";
+        }
+        if (map.getKind() == 3) {
+            //Reperaturen
+            return mapMemberRepository.findByNameAndProject("Richard",map.getProjectname()).getCospendMemberId()+"";
             //return "9";
         }
         return "";

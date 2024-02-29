@@ -14,7 +14,7 @@ public class MapCategory {
     private int id;
     private int budgetCategory;
     private int cospendCategory;
-    private int kind; // 0= Miete, 1= reperatur, 2 = umlegbar auf alle
+    private int kind; // 0= Miete, 1= reperatur, 2 = umlegbar auf alle, 3 = Rücklage
     private int inout; //0= Einnahme , 2 = Ausgabe
     private String projectname;
 }
