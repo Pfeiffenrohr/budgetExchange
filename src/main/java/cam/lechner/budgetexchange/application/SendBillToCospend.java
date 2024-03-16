@@ -73,7 +73,7 @@ public class SendBillToCospend {
                         map.add("comment", tr.getBeschreibung());
                         map.add("payer", payer);
                         map.add("repeat", "n");
-                        map.add("payed_for", payed_for);
+                        map.add("payedFor", payed_for);
                         map.add("date", tr.getDatum());
                         // map.add("categoryid", mapCategoryRepository.findByBudgetCategory(tr.getKategorie()).getCospendCategory() + "");
                         map.add("categoryid", kat.getCospendCategory() + "");
