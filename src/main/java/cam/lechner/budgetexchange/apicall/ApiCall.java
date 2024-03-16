@@ -146,7 +146,7 @@ public class ApiCall {
         String[] chunks = result.split(":");
         String[] resp = chunks[6].split("}");
         LOG.info("Bill " + map.get("what") + " succesfully sent");
-        sendMessageToTalk("[Cospend]Neue Rechnung zu Cosepend: " + map.get("what"));
+       //sendMessageToTalk("[Cospend]Neue Rechnung zu Cosepend: " + map.get("what"));
         return Integer.parseInt(resp[0]);
     }
 
@@ -221,5 +221,27 @@ public class ApiCall {
         ResponseEntity<String> response = restTemplate.postForEntity(
                 url, request, String.class);
         String result = response.getBody();
+    }
+    public Integer sendCategory(MultiValueMap map,String projectId) {
+        LOG.info("Start send Category" + map.get("name"));
+        String plainCreds = "richard:Thierham123";
+        byte[] encodedAuth = Base64.encodeBase64(
+                plainCreds.getBytes(Charset.forName("US-ASCII")), false);
+        String authHeader = "Basic " + new String(encodedAuth);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", authHeader);
+        headers.add("OCS-APIRequest", "true");
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("richardlechner.spdns.de")
+                .path("/ocs/v2.php/apps/cospend/api/v1/projects/"+projectId+"/category").build();
+        String url = uriComponents.toUriString();
+        ResponseEntity<String> response = restTemplate.postForEntity(
+                url, request, String.class);
+        String result = response.getBody();
+        String[] chunks = result.split(":");
+        String[] resp = chunks[6].split("}");
+        LOG.info("Category " + map.get("name") + " succesfully sent");
+        //sendMessageToTalk("[Cospend]Neue Rechnung zu Cosepend: " + map.get("what"));
+        return Integer.parseInt(resp[0]);
     }
 }
