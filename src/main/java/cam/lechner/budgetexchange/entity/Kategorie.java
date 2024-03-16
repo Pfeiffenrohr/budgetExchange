@@ -12,15 +12,14 @@ import java.util.Date;
 @Configuration
 public class Kategorie {
 
-    Integer id;
-    String name;
-    Integer konto_id;
-    Double wert;
-    Date datum;
-    String partner;
-    String beschreibung;
-    Integer kategorie;
-    Integer kor_id;
-    Integer cycle;
-    String planed;
+    private Integer id;
+    private String name;
+    private String parent;
+    private String description;
+    private Double limit_month;
+    private Double limit_year;
+    private String mode;
+    private Integer active;
+    private Integer forecast;
+    private Integer inflation;
 }
