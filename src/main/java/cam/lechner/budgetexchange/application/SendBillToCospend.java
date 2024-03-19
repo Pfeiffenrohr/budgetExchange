@@ -32,6 +32,7 @@ public class SendBillToCospend {
     private MapCategoryRepository mapCategoryRepository;
     @Autowired
     private MapMemberRepository mapMemberRepository;
+
     private static final Logger LOG = LoggerFactory.getLogger(SendBillToCospend.class);
 
     public void getMissingTransactionsAndSendToCospend() {
@@ -60,7 +61,7 @@ public class SendBillToCospend {
                 String payed_for = getPayedFor(kat);
                 for (Transaktion tr : trans) {
                     TransactionIds transactionIds = new TransactionIds();
-                    transactionIds = compareRepository.findByBudgetTransId(tr.getId());
+                    transactionIds = compareRepository.findByBudgetTransIdAndProjectId(tr.getId(),projectId);
                     if (transactionIds == null) {
                         if (notToCalculate(tr)) {
                             continue;
@@ -118,7 +119,7 @@ public class SendBillToCospend {
             deleteList.forEach(deleteBill -> {
                 apicall.deleteBill(deleteBill.getNextcloudBillId() + "", deleteBill.getProjectId());
                 compareRepository.delete(deleteBill);
-                transaktionRepository.deleteById(deleteBill.getBudgetTransId());
+                deleteSaveTransaktion(deleteBill.getBudgetTransId(), transaktionRepository, compareRepository);
             });
         }
     }
@@ -254,7 +255,11 @@ public class SendBillToCospend {
         }
         return "";
     }
-
+    public void deleteSaveTransaktion(Integer transaktionId, TransaktionRepository transaktionRepository, CompareRepository compareRepository) {
+        if (compareRepository.findByBudgetTransId(transaktionId) == null) {
+            transaktionRepository.deleteById(transaktionId);
+        }
+    }
     /*
     @EventListener(ApplicationReadyEvent.class)
     public void doSomethingAfterStartup() {

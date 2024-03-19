@@ -39,7 +39,7 @@ public class CreateCategories {
 
         kategories.forEach(kategorie -> {
             try {
-                if (! kategorie.getName().equals("Fixkosten"))
+                if (! kategorie.getName().equals("Auto"))
                 {
                     return;
                 }
@@ -52,7 +52,18 @@ public class CreateCategories {
                 mapCategory.setBudgetCategory(kategorie.getId());
                 mapCategory.setCospendCategory(cospendNumber);
                 mapCategory.setProjectname(projectId);
-                mapCategory.setKind(4);
+                if (kategorie.getMode().equals("ausgabe")) {
+                    mapCategory.setKind(4);
+                }
+                else {
+                    if (kategorie.getMode().equals("einnahme")) {
+                    mapCategory.setKind(5);
+                    }
+                    else {
+                        return;
+                    }
+
+                }
                 mapCategory.setInout(1);
                 mapCategoryRepository.save(mapCategory);
 
