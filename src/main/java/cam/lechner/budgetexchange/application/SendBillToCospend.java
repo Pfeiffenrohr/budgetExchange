@@ -44,12 +44,13 @@ public class SendBillToCospend {
         mapCategoryRepository.findAll().forEach(t::add);
 
         compareRepository.findAll().forEach(transIds::add);
-        transIds.forEach(trans -> {
+        compareRepository.setIscheckedTo0();
+     /*   transIds.forEach(trans -> {
             //set all isCheked to 0;
             trans.setIsChecked(0);
             compareRepository.save(trans);
 
-        });
+        });*/
 
         //compareRepository.updateIsChecked(0);
 
@@ -62,10 +63,10 @@ public class SendBillToCospend {
                 for (Transaktion tr : trans) {
                     TransactionIds transactionIds = new TransactionIds();
                     transactionIds = compareRepository.findByBudgetTransIdAndProjectId(tr.getId(),projectId);
-                    if (transactionIds == null) {
                         if (notToCalculate(tr)) {
                             continue;
                         }
+                    if (transactionIds == null) {
                         TransactionIds newtransactionIds = new TransactionIds();
                         newtransactionIds.setBudgetTransId(tr.getId());
                         MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
@@ -160,6 +161,11 @@ public class SendBillToCospend {
     }
 
     private Boolean notToCalculate(Transaktion trans) {
+        //Rentenversicherung soll nicht beachtet werden !!!
+        if (trans.getKonto_id() == 12) {
+            return true;
+        }
+
         if (trans.getKategorie() != 89 && trans.getKategorie() != 122
             && trans.getKategorie() != 39
                 && trans.getKategorie() != 139

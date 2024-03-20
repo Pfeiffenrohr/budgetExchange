@@ -18,9 +18,9 @@ public class ScheduleSendBillService {
     CreateCategories createCategories;
 
     public void processData() {
-
+        createCategories.sendCategorysToCospend();
         sendBillToCospend.getMissingTransactionsAndSendToCospend();
-        //createCategories.sendCategorysToCospend();
+
 
     }
 }
