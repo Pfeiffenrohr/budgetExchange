@@ -7,5 +7,6 @@ import org.springframework.data.repository.CrudRepository;
 public interface MapCategoryRepository extends CrudRepository<MapCategory, Integer>, JpaSpecificationExecutor<MapCategory>  {
 
     MapCategory findByBudgetCategory (Integer budgetCategory );
+    MapCategory findByBudgetCategoryAndProjectname (Integer budgetCategory,String projectname);
 
 }

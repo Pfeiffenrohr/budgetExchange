@@ -34,24 +34,20 @@ public class CreateCategories {
 
         //Find all Categories
         List<Kategorie> kategories = apicall.getAllCategories();
-        String projectname ="budget";
+        String projectname ="budgetall";
 
 
         kategories.forEach(kategorie -> {
             try {
-                if (! kategorie.getName().equals("Auto"))
-                {
+                if (mapCategoryRepository.findByBudgetCategoryAndProjectname(kategorie.getId(),projectname) != null) {
                     return;
                 }
+
                 String projectId = projectname;
                 MapCategory mapCategory = new MapCategory();
                         MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
-                        map.add("name", kategorie.getName());
-                        map.add("color", "#ffaa00");
-                        Integer cospendNumber=apicall.sendCategory(map, projectId);
-                mapCategory.setBudgetCategory(kategorie.getId());
-                mapCategory.setCospendCategory(cospendNumber);
-                mapCategory.setProjectname(projectId);
+
+
                 if (kategorie.getMode().equals("ausgabe")) {
                     mapCategory.setKind(4);
                 }
@@ -64,6 +60,12 @@ public class CreateCategories {
                     }
 
                 }
+                Integer cospendNumber=apicall.sendCategory(map, projectId);
+                mapCategory.setProjectname(projectId);
+                map.add("name", kategorie.getName());
+                map.add("color", "#ffaa00");
+                mapCategory.setBudgetCategory(kategorie.getId());
+                mapCategory.setCospendCategory(cospendNumber);
                 mapCategory.setInout(1);
                 mapCategoryRepository.save(mapCategory);
 

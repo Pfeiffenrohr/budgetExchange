@@ -146,7 +146,7 @@ public class ApiCall {
         String[] chunks = result.split(":");
         String[] resp = chunks[6].split("}");
         LOG.info("Bill " + map.get("what") + " succesfully sent");
-       //sendMessageToTalk("[Cospend]Neue Rechnung zu Cosepend: " + map.get("what"));
+        sendMessageToTalk("[Cospend]Neue Rechnung zu Cosepend: " + map.get("what"));
         return Integer.parseInt(resp[0]);
     }
 
