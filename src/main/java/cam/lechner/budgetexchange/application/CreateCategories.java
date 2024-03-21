@@ -39,6 +39,9 @@ public class CreateCategories {
 
         kategories.forEach(kategorie -> {
             try {
+                if (kategorie.getId() == 98 || kategorie.getId() == 140 || kategorie.getId() == 138 || kategorie.getId() == 143 ) {
+                    return;
+                }
                 if (mapCategoryRepository.findByBudgetCategoryAndProjectname(kategorie.getId(),projectname) != null) {
                     return;
                 }
