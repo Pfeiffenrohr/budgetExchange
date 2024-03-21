@@ -162,7 +162,7 @@ public class SendBillToCospend {
 
     private Boolean notToCalculate(Transaktion trans) {
         //Rentenversicherung soll nicht beachtet werden !!!
-        if (trans.getKonto_id() == 12) {
+        if (trans.getKonto_id() == 12 || trans.getKonto_id() == 142 || trans.getKonto_id() == 30 ) {
             return true;
         }
 
