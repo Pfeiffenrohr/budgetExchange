@@ -108,7 +108,10 @@ public class SendBillToCospend {
                                 transaktionRepository.save(tr);
                             }
                         }
-
+                        else {
+                            transactionIds.setIsChecked(1);
+                            compareRepository.save(transactionIds);
+                        }
                     }
 
                 }
