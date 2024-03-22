@@ -20,4 +20,5 @@ public interface CompareRepository  extends JpaRepository<TransactionIds, Intege
     TransactionIds findByBudgetTransId (Integer budgetTransId);
     List<TransactionIds> findByIsChecked (Integer isChecked);
     TransactionIds findByBudgetTransIdAndProjectId (Integer budgetTransId, String projectId);
+    List <TransactionIds> findByBudgetTransIdAndIsChecked (Integer budgetTransId, Integer IsChecked);
 }
