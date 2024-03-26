@@ -101,16 +101,20 @@ public class SendBillToCospend {
                             map.add("id", +transactionIds.getNextcloudBillId() + "");
                             map.add("categoryId", kat.getCospendCategory() + "");
                             apicall.updateBill(map, "/" + transactionIds.getNextcloudBillId(), projectId);
-                            transactionIds.setIsChecked(1);
-                            compareRepository.save(transactionIds);
+                            if (storedTrans.getKategorie() == tr.getKategorie()) {
+                                transactionIds.setIsChecked(1);
+                                compareRepository.save(transactionIds);
+                            }
                             if (compareRepository.findByBudgetTransIdAndIsChecked(tr.getId(),0).size() == 0) {
                                 // Die neue Transaktion darf nur gespeichert werden, wenn keine andere Transaktion besteht, die noch updated werden muss.
                                 transaktionRepository.save(tr);
                             }
                         }
                         else {
-                            transactionIds.setIsChecked(1);
-                            compareRepository.save(transactionIds);
+                            if (storedTrans.getKategorie() == tr.getKategorie()) {
+                                transactionIds.setIsChecked(1);
+                                compareRepository.save(transactionIds);
+                            }
                         }
                     }
 
