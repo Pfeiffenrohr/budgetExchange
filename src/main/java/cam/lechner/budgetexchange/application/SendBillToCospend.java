@@ -63,7 +63,7 @@ public class SendBillToCospend {
                 for (Transaktion tr : trans) {
                     TransactionIds transactionIds = new TransactionIds();
                     transactionIds = compareRepository.findByBudgetTransIdAndProjectId(tr.getId(),projectId);
-                        if (notToCalculate(tr)) {
+                        if (notToCalculate(tr,projectId)) {
                             continue;
                         }
                     if (transactionIds == null) {
@@ -170,9 +170,9 @@ public class SendBillToCospend {
         return "";
     }
 
-    private Boolean notToCalculate(Transaktion trans) {
+    private Boolean notToCalculate(Transaktion trans, String project) {
         //Rentenversicherung soll nicht beachtet werden !!!
-        if (trans.getKonto_id() == 12 || trans.getKonto_id() == 142 || trans.getKonto_id() == 30 ) {
+        if (trans.getKonto_id() == 12 || trans.getKonto_id() == 142 || trans.getKonto_id() == 30 || trans.getKonto_id() == 17) {
             return true;
         }
 
@@ -207,7 +207,7 @@ public class SendBillToCospend {
             return true;
         }
 
-        if (trans.getKategorie() == 89 && !isCorrectBausparer(trans)) {
+        if (trans.getKategorie() == 89 && !isCorrectBausparer(trans,project)) {
             return true;
         }
 
@@ -230,8 +230,20 @@ public class SendBillToCospend {
         }
         return true;
     }
-    private Boolean isCorrectBausparer(Transaktion trans) {
-        if ((trans.getKategorie() == 89 && trans.getKonto_id() == 32 && trans.getName().equals("Bausparen WG17"))) {
+    private Boolean isCorrectBausparer(Transaktion trans, String project) {
+        if (project.equals("test2")) {
+            if ((trans.getKategorie() == 89 && trans.getKonto_id() == 32 && trans.getName().equals("Bausparen WG17"))) {
+                return true;
+            }
+            return false;
+        }
+        if (project.equals("wg-26")) {
+            if ((trans.getKategorie() == 89 && trans.getKonto_id() == 32 && trans.getName().equals("Bausparen WG26"))) {
+                return true;
+            }
+            return false;
+        }
+        if (trans.getKategorie() == 89 && ( trans.getKonto_id() == 32 || trans.getKonto_id() ==9)) {
             return true;
         }
         return false;
