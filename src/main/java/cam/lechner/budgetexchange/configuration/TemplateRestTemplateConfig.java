@@ -6,12 +6,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
+
 @Configuration
-@ConditionalOnMissingBean(name = "RestTemplate")
+//@ConditionalOnMissingBean(name = "RestTemplate")
 public class TemplateRestTemplateConfig {
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         // Do any additional configuration here
-        return builder.build();
+        return builder.setConnectTimeout(Duration.ofMinutes(5)).
+                build();
     }
 }

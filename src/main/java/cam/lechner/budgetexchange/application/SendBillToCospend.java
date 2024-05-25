@@ -62,10 +62,10 @@ public class SendBillToCospend {
                 String payed_for = getPayedFor(kat);
                 for (Transaktion tr : trans) {
                     TransactionIds transactionIds = new TransactionIds();
-                    transactionIds = compareRepository.findByBudgetTransIdAndProjectId(tr.getId(),projectId);
-                        if (notToCalculate(tr,projectId)) {
-                            continue;
-                        }
+                    transactionIds = compareRepository.findByBudgetTransIdAndProjectId(tr.getId(), projectId);
+                    if (notToCalculate(tr, projectId)) {
+                        continue;
+                    }
                     if (transactionIds == null) {
                         TransactionIds newtransactionIds = new TransactionIds();
                         newtransactionIds.setBudgetTransId(tr.getId());
@@ -89,11 +89,11 @@ public class SendBillToCospend {
                         Transaktion storedTrans = transaktionRepository.findById(transactionIds.getBudgetTransId()).orElseThrow();
                         if (!storedTrans.getName().equals(tr.getName())
                                 || storedTrans.getWert() != tr.getWert()
-                                || ! storedTrans.getBeschreibung().equals(tr.getBeschreibung())) {
+                                || !storedTrans.getBeschreibung().equals(tr.getBeschreibung())) {
                             MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
                             map.add("amount", tr.getWert() * kat.getInout() + "");
                             map.add("what", tr.getName());
-                            map.add("comment",tr.getBeschreibung());
+                            map.add("comment", tr.getBeschreibung());
                             map.add("payer", payer);
                             map.add("repeat", "n");
                             map.add("payedFor", payed_for);
@@ -105,12 +105,11 @@ public class SendBillToCospend {
                                 transactionIds.setIsChecked(1);
                                 compareRepository.save(transactionIds);
                             }
-                            if (compareRepository.findByBudgetTransIdAndIsChecked(tr.getId(),0).size() == 0) {
+                            if (compareRepository.findByBudgetTransIdAndIsChecked(tr.getId(), 0).size() == 0) {
                                 // Die neue Transaktion darf nur gespeichert werden, wenn keine andere Transaktion besteht, die noch updated werden muss.
                                 transaktionRepository.save(tr);
                             }
-                        }
-                        else {
+                        } else {
                             if (storedTrans.getKategorie() == tr.getKategorie()) {
                                 transactionIds.setIsChecked(1);
                                 compareRepository.save(transactionIds);
@@ -119,13 +118,13 @@ public class SendBillToCospend {
                     }
 
                 }
-            } catch (Exception e ) {
-                LOG.error(" Exception " +e);
+            } catch (Exception e) {
+                LOG.error(" Exception " + e);
                 apicall.sendMessageToTalk("@richard [Cospend] !!!! Fehler  +e");
                 errorOccured[0] = true;
             }
         });
-        if ( ! errorOccured[0]) {
+        if (!errorOccured[0]) {
             List<TransactionIds> deleteList = compareRepository.findByIsChecked(0);
             deleteList.forEach(deleteBill -> {
                 apicall.deleteBill(deleteBill.getNextcloudBillId() + "", deleteBill.getProjectId());
@@ -135,36 +134,36 @@ public class SendBillToCospend {
         }
     }
 
-    private String getPayer(MapCategory map) throws Exception{
+    private String getPayer(MapCategory map) throws Exception {
 
         if (map.getKind() == 0) {
             //Miete
-            return mapMemberRepository.findByNameAndProject("Mieter",map.getProjectname()).getCospendMemberId()+"";
+            return mapMemberRepository.findByNameAndProject("Mieter", map.getProjectname()).getCospendMemberId() + "";
             //return "59";
         }
         if (map.getKind() == 2) {
             //Ausgaben
-            return mapMemberRepository.findByNameAndProject("Hausverwaltung",map.getProjectname()).getCospendMemberId()+"";
+            return mapMemberRepository.findByNameAndProject("Hausverwaltung", map.getProjectname()).getCospendMemberId() + "";
             //return "58";
         }
         if (map.getKind() == 1) {
             //Reperaturen
-            return mapMemberRepository.findByNameAndProject("Richard",map.getProjectname()).getCospendMemberId()+"";
-           // return "58";
+            return mapMemberRepository.findByNameAndProject("Richard", map.getProjectname()).getCospendMemberId() + "";
+            // return "58";
         }
         if (map.getKind() == 3) {
             //Reperaturen
-            return mapMemberRepository.findByNameAndProject("Hausverwaltung",map.getProjectname()).getCospendMemberId()+"";
+            return mapMemberRepository.findByNameAndProject("Hausverwaltung", map.getProjectname()).getCospendMemberId() + "";
             // return "58";
         }
         if (map.getKind() == 4) {
             //Reperaturen
-            return mapMemberRepository.findByNameAndProject("Ausgabe",map.getProjectname()).getCospendMemberId()+"";
+            return mapMemberRepository.findByNameAndProject("Ausgabe", map.getProjectname()).getCospendMemberId() + "";
             // return "58";
         }
         if (map.getKind() == 5) {
             //Reperaturen
-            return mapMemberRepository.findByNameAndProject("Einnahme",map.getProjectname()).getCospendMemberId()+"";
+            return mapMemberRepository.findByNameAndProject("Einnahme", map.getProjectname()).getCospendMemberId() + "";
             // return "58";
         }
         return "";
@@ -177,7 +176,7 @@ public class SendBillToCospend {
         }
 
         if (trans.getKategorie() != 89 && trans.getKategorie() != 122
-            && trans.getKategorie() != 39
+                && trans.getKategorie() != 39
                 && trans.getKategorie() != 139
                 && trans.getKategorie() != 142
                 && trans.getKategorie() != 155
@@ -185,29 +184,29 @@ public class SendBillToCospend {
                 && trans.getKategorie() != 71) {
             return false;
         }
-        if (trans.getKategorie()== 158  &&  trans.getKonto_id()  != 32) {
+        if (trans.getKategorie() == 158 && trans.getKonto_id() != 32) {
             //Alles was Kategorie Rücklagen ist und nocht Konto Sprkasse Giro 2
             return true;
         }
-        if (trans.getKategorie()== 155  && trans.getKonto_id()  == 92) {
+        if (trans.getKategorie() == 155 && trans.getKonto_id() == 92) {
             //Alles was Kategorie Ahornstrasse 39 ist und Konto Haus Ahornstr. 39
             return true;
         }
-        if (trans.getKategorie()== 139  && trans.getKonto_id() != 32) {
+        if (trans.getKategorie() == 139 && trans.getKonto_id() != 32) {
             return true;
         }
-        if (trans.getKategorie()== 142  && trans.getKonto_id() != 32) {
+        if (trans.getKategorie() == 142 && trans.getKonto_id() != 32) {
             return true;
         }
-        if (trans.getKategorie()== 71  && isNotMugRueckzahlung(trans)) {
-            return true;
-        }
-
-        if (trans.getKategorie()== 39  && isNotMugGrundsteuer(trans)) {
+        if (trans.getKategorie() == 71 && isNotMugRueckzahlung(trans)) {
             return true;
         }
 
-        if (trans.getKategorie() == 89 && !isCorrectBausparer(trans,project)) {
+        if (trans.getKategorie() == 39 && isNotMugGrundsteuer(trans)) {
+            return true;
+        }
+
+        if (trans.getKategorie() == 89 && !isCorrectBausparer(trans, project)) {
             return true;
         }
 
@@ -230,8 +229,9 @@ public class SendBillToCospend {
         }
         return true;
     }
+
     private Boolean isCorrectBausparer(Transaktion trans, String project) {
-        if (project.equals("test2")) {
+        if (project.equals("test2") || project.equals("wg17neu")) {
             if ((trans.getKategorie() == 89 && trans.getKonto_id() == 32 && trans.getName().equals("Bausparen WG17"))) {
                 return true;
             }
@@ -243,7 +243,7 @@ public class SendBillToCospend {
             }
             return false;
         }
-        if (trans.getKategorie() == 89 && ( trans.getKonto_id() == 32 || trans.getKonto_id() ==9)) {
+        if (trans.getKategorie() == 89 && (trans.getKonto_id() == 32 || trans.getKonto_id() == 9)) {
             return true;
         }
         return false;
@@ -253,40 +253,44 @@ public class SendBillToCospend {
 
         if (map.getKind() == 0) {
             //Miete
-            return mapMemberRepository.findByNameAndProject("Hausverwaltung",map.getProjectname()).getCospendMemberId()+"";
+            return mapMemberRepository.findByNameAndProject("Hausverwaltung", map.getProjectname()).getCospendMemberId() + "";
             //return "58";
         }
         if (map.getKind() == 2) {
             //ausgaben
-            return mapMemberRepository.findByNameAndProject("Mieter",map.getProjectname()).getCospendMemberId()+"";
+            return mapMemberRepository.findByNameAndProject("Mieter", map.getProjectname()).getCospendMemberId() + "";
             //return "59";
         }
         if (map.getKind() == 1) {
             //Reperaturen
-            return mapMemberRepository.findByNameAndProject("Mieter",map.getProjectname()).getCospendMemberId()+"";
+            return mapMemberRepository.findByNameAndProject("Mieter", map.getProjectname()).getCospendMemberId() + "";
             //return "9";
         }
         if (map.getKind() == 3) {
             //Reperaturen
-            return mapMemberRepository.findByNameAndProject("Richard",map.getProjectname()).getCospendMemberId()+"";
+            return mapMemberRepository.findByNameAndProject("Richard", map.getProjectname()).getCospendMemberId() + "";
             //return "9";
         }
         if (map.getKind() == 4) {
             //Reperaturen
-            return mapMemberRepository.findByNameAndProject("Hausverwaltung",map.getProjectname()).getCospendMemberId()+"";
+            return mapMemberRepository.findByNameAndProject("Hausverwaltung", map.getProjectname()).getCospendMemberId() + "";
             //return "9";
         }
         if (map.getKind() == 5) {
             //Reperaturen
-            return mapMemberRepository.findByNameAndProject("Hausverwaltung",map.getProjectname()).getCospendMemberId()+"";
+            return mapMemberRepository.findByNameAndProject("Hausverwaltung", map.getProjectname()).getCospendMemberId() + "";
             //return "9";
         }
         return "";
     }
+
     public void deleteSaveTransaktion(Integer transaktionId, TransaktionRepository transaktionRepository, CompareRepository compareRepository) {
-        if (compareRepository.findByBudgetTransId(transaktionId) == null) {
-            transaktionRepository.deleteById(transaktionId);
-        }
+       try {if (compareRepository.findByBudgetTransId(transaktionId).size() < 1) {
+               transaktionRepository.deleteById(transaktionId);
+           }
+       } catch (Exception e) {
+           LOG.error("Transaktion ID {} kann nicht gelöscht werden !!!", transaktionId);
+       }
     }
     /*
     @EventListener(ApplicationReadyEvent.class)
