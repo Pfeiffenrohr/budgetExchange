@@ -17,7 +17,7 @@ public interface CompareRepository  extends JpaRepository<TransactionIds, Intege
     @Modifying
     @Query("update TransactionIds ti set ti.isChecked = 0 ")
     void  setIscheckedTo0();
-    TransactionIds findByBudgetTransId (Integer budgetTransId);
+    List<TransactionIds> findByBudgetTransId (Integer budgetTransId);
     List<TransactionIds> findByIsChecked (Integer isChecked);
     TransactionIds findByBudgetTransIdAndProjectId (Integer budgetTransId, String projectId);
     List <TransactionIds> findByBudgetTransIdAndIsChecked (Integer budgetTransId, Integer IsChecked);
