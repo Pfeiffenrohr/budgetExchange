@@ -169,7 +169,7 @@ public class ApiCall {
         String[] chunks = result.split(":");
         String[] resp = chunks[6].split("}");
         LOG.info("Bill " + map.get("what") + " succesfully sent");
-        sendMessageToTalk("[Cospend] Update Rechnung zu Cosepend: " + map.get("what"));
+        //sendMessageToTalk("[Cospend] Update Rechnung zu Cosepend: " + map.get("what"));
         return Integer.parseInt(resp[0]);
     }
 
@@ -191,7 +191,7 @@ public class ApiCall {
                     url, HttpMethod.DELETE, request, String.class);
             String result = response.getBody();
             LOG.info("Bill deleteted " + billId);
-            sendMessageToTalk("[Cospend] Rechnung gelöscht: " + billId);
+            //sendMessageToTalk("[Cospend] Rechnung gelöscht: " + billId);
         } catch (final HttpClientErrorException e) {
             LOG.error("!!!Fehler " + e.getStatusCode().toString());
             // System.out.println(e.getStatusCode());
