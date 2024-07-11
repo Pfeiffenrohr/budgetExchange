@@ -223,7 +223,7 @@ public class ApiCall {
         String result = response.getBody();
     }
     public Integer sendCategory(MultiValueMap map,String projectId) {
-        LOG.info("Start send Category" + map.get("name"));
+        LOG.info("Start send Category " + map.get("name"));
         String plainCreds = "richard:Thierham123";
         byte[] encodedAuth = Base64.encodeBase64(
                 plainCreds.getBytes(Charset.forName("US-ASCII")), false);
