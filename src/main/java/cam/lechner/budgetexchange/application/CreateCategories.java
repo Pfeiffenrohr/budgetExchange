@@ -63,10 +63,11 @@ public class CreateCategories {
                     }
 
                 }
-                Integer cospendNumber=apicall.sendCategory(map, projectId);
+
                 mapCategory.setProjectname(projectId);
                 map.add("name", kategorie.getName());
                 map.add("color", "#ffaa00");
+                Integer cospendNumber=apicall.sendCategory(map, projectId);
                 mapCategory.setBudgetCategory(kategorie.getId());
                 mapCategory.setCospendCategory(cospendNumber);
                 mapCategory.setInout(1);
@@ -74,7 +75,7 @@ public class CreateCategories {
 
             } catch (Exception e ) {
                 LOG.error(" Exception " +e);
-                apicall.sendMessageToTalk("@richard [Cospend] !!!! Fehler  +e");
+                apicall.sendMessageToTalk("@richard [Cospend] !!!! Fehler"  +e);
                 errorOccured[0] = true;
             }
         });
