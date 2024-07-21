@@ -37,12 +37,12 @@ public class SendBillToCospend {
 
     public void getMissingTransactionsAndSendToCospend() {
         Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.DATE,cal.getActualMaximum(Calendar.DATE));
         SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd");
         List<MapCategory> t = new ArrayList<MapCategory>();
         List<TransactionIds> transIds = new ArrayList<TransactionIds>();
         final Boolean[] errorOccured = {false};
         mapCategoryRepository.findAll().forEach(t::add);
-
         compareRepository.findAll().forEach(transIds::add);
         compareRepository.setIscheckedTo0();
      /*   transIds.forEach(trans -> {
