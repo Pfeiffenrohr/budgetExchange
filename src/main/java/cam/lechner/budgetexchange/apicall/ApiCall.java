@@ -104,7 +104,7 @@ public class ApiCall {
     }
 
     public BillRespond getAllBills(String projectId) {
-        LOG.info("Start getAllBillsFromCospend");
+        //LOG.info("Start getAllBillsFromCospend");
         if (host == null) {
             host = "localhost";
         }

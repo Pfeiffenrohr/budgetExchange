@@ -23,8 +23,7 @@ public class ScheduleSendBillService {
     public void processData() {
         //createCategories.sendCategorysToCospend();
         //sendBillToCospend.getMissingTransactionsAndSendToCospend();
-        //compare.compareCospendBudget();
-        compare.compareBudgetCospend();
+        compare.doCompare();
 
     }
 }
