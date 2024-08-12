@@ -1,6 +1,7 @@
 package cam.lechner.budgetexchange.scheduler;
 
 
+import cam.lechner.budgetexchange.application.Compare;
 import cam.lechner.budgetexchange.application.CreateCategories;
 import cam.lechner.budgetexchange.application.SendBillToCospend;
 import org.slf4j.Logger;
@@ -16,11 +17,13 @@ public class ScheduleSendBillService {
     SendBillToCospend sendBillToCospend;
     @Autowired
     CreateCategories createCategories;
+    @Autowired
+    Compare compare;
 
     public void processData() {
         createCategories.sendCategorysToCospend();
         sendBillToCospend.getMissingTransactionsAndSendToCospend();
-
+        compare.doCompare();
 
     }
 }

@@ -103,8 +103,8 @@ public class ApiCall {
         return list;
     }
 
-    public BillRespond getAllBills(RestTemplate restTemplate,String projectId) {
-        LOG.info("Start getAllBillsFromCospend");
+    public BillRespond getAllBills(String projectId) {
+        //LOG.info("Start getAllBillsFromCospend");
         if (host == null) {
             host = "localhost";
         }
@@ -214,7 +214,7 @@ public class ApiCall {
             headers.add("OCS-APIRequest", "true");
             MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
             map.add("token", "wz6hggy5");
-            map.add("message", msg);
+            map.add("message", "Message from exchange: "+msg);
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
             UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("richardlechner.spdns.de")
                     .path("/ocs/v2.php/apps/spreed/api/v1/chat/kzuuotjy").build();
