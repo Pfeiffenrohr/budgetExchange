@@ -21,8 +21,8 @@ public class ScheduleSendBillService {
     Compare compare;
 
     public void processData() {
-        //createCategories.sendCategorysToCospend();
-        //sendBillToCospend.getMissingTransactionsAndSendToCospend();
+        createCategories.sendCategorysToCospend();
+        sendBillToCospend.getMissingTransactionsAndSendToCospend();
         compare.doCompare();
 
     }
