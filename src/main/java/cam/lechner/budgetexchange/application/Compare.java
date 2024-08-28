@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,21 +26,26 @@ public class Compare {
     private static final Logger LOG = LoggerFactory.getLogger(Compare.class);
 
     public void doCompare() {
-        compareCospendBudget();
-        compareBudgetCospend();
+        List<String> projects = new ArrayList<>();
+        projects.add("budgetall");
+        projects.add("wg-26-neu");
+        projects.forEach(project -> {
+        compareCospendBudget(project);
+        compareBudgetCospend(project);
+    });
     }
 
-    public void compareCospendBudget() {
+    public void compareCospendBudget(String project) {
         //LOG.info("Start compareCospendBudget");
         //Liest alle Rechnungen von cospend und überprüft, ob alle in Budget voehanden sind
-        BillRespond respond = apicall.getAllBills("budgetall");
+        BillRespond respond = apicall.getAllBills(project);
         //LOG.info("Found {} bills", respond.getOcs().getData().getNb_bills());
-        List<Integer> allNextcloudIds = compareRepository.findNextCloudBillIdsByProject("budgetall");
+        List<Integer> allNextcloudIds = compareRepository.findNextCloudBillIdsByProject(project);
         for (int i = 0; i < respond.getOcs().getData().getBills().length; i++) {
             if (! allNextcloudIds.contains(respond.getOcs().getData().getBills()[i].getId())) {
                 LOG.warn(" Bill not found in Budget " + respond.getOcs().getData().getBills()[i].getId());
                 LOG.warn("Delete {} in cospend, because it was not in Budget", respond.getOcs().getData().getBills()[i].getId());
-                if (apicall.deleteBill(respond.getOcs().getData().getBills()[i].getId().toString(), "budgetall")) {
+                if (apicall.deleteBill(respond.getOcs().getData().getBills()[i].getId().toString(), project)) {
                     LOG.info("Bill {} successfully deleted");
                     apicall.sendMessageToTalk("Deleted bill " + respond.getOcs().getData().getBills()[i].getId() + " in Cospend");
                 } else {
@@ -51,11 +57,11 @@ public class Compare {
         //LOG.info("End compareCospendBudget");
     }
 
-    public void compareBudgetCospend() {
+    public void compareBudgetCospend(String project) {
         //LOG.info("Start comparing BudgetCospend");
-        List<TransactionIds> allBudgetids = compareRepository.findByProjectId("budgetall");
+        List<TransactionIds> allBudgetids = compareRepository.findByProjectId(project);
         //LOG.info("Found {} bills in Budget", allBudgetids.size());
-        BillRespond respond = apicall.getAllBills("budgetall");
+        BillRespond respond = apicall.getAllBills(project);
         List<Integer> listCospend = Arrays.asList(respond.getOcs().getData().getAllBillIds());
         allBudgetids.forEach( transaction -> {
             if (! listCospend.contains(transaction.getNextcloudBillId())) {

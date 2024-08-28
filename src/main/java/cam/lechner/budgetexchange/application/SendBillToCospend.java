@@ -237,7 +237,7 @@ public class SendBillToCospend {
             }
             return false;
         }
-        if (project.equals("wg-26")) {
+        if (project.equals("wg-26") || project.equals("wg-26-neu") ) {
             if ((trans.getKategorie() == 89 && trans.getKonto_id() == 32 && trans.getName().equals("Bausparen WG26"))) {
                 return true;
             }
