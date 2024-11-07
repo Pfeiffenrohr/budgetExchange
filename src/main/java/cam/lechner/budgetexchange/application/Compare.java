@@ -36,10 +36,8 @@ public class Compare {
     }
 
     public void compareCospendBudget(String project) {
-        //LOG.info("Start compareCospendBudget");
         //Liest alle Rechnungen von cospend und überprüft, ob alle in Budget voehanden sind
         BillRespond respond = apicall.getAllBills(project);
-        //LOG.info("Found {} bills", respond.getOcs().getData().getNb_bills());
         List<Integer> allNextcloudIds = compareRepository.findNextCloudBillIdsByProject(project);
         for (int i = 0; i < respond.getOcs().getData().getBills().length; i++) {
             if (! allNextcloudIds.contains(respond.getOcs().getData().getBills()[i].getId())) {
@@ -54,13 +52,10 @@ public class Compare {
                 }
             }
         }
-        //LOG.info("End compareCospendBudget");
     }
 
     public void compareBudgetCospend(String project) {
-        //LOG.info("Start comparing BudgetCospend");
         List<TransactionIds> allBudgetids = compareRepository.findByProjectId(project);
-        //LOG.info("Found {} bills in Budget", allBudgetids.size());
         BillRespond respond = apicall.getAllBills(project);
         List<Integer> listCospend = Arrays.asList(respond.getOcs().getData().getAllBillIds());
         allBudgetids.forEach( transaction -> {
