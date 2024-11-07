@@ -45,14 +45,6 @@ public class SendBillToCospend {
         mapCategoryRepository.findAll().forEach(t::add);
         compareRepository.findAll().forEach(transIds::add);
         compareRepository.setIscheckedTo0();
-     /*   transIds.forEach(trans -> {
-            //set all isCheked to 0;
-            trans.setIsChecked(0);
-            compareRepository.save(trans);
-
-        });*/
-
-        //compareRepository.updateIsChecked(0);
 
         t.forEach(kat -> {
             try {
@@ -77,7 +69,6 @@ public class SendBillToCospend {
                         map.add("repeat", "n");
                         map.add("payedFor", payed_for);
                         map.add("date", tr.getDatum());
-                        // map.add("categoryid", mapCategoryRepository.findByBudgetCategory(tr.getKategorie()).getCospendCategory() + "");
                         map.add("categoryId", kat.getCospendCategory() + "");
                         newtransactionIds.setNextcloudBillId(apicall.sendBill(map, projectId));
                         newtransactionIds.setIsChecked(1);
@@ -292,10 +283,4 @@ public class SendBillToCospend {
            LOG.error("Transaktion ID {} kann nicht gelöscht werden !!!", transaktionId);
        }
     }
-    /*
-    @EventListener(ApplicationReadyEvent.class)
-    public void doSomethingAfterStartup() {
-        System.out.println("hello world, I have just started up");
-        getMissingTransactions();
-    }*/
 }
