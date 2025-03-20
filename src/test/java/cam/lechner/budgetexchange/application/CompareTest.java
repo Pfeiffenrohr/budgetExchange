@@ -15,7 +15,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 @Disabled
 public class CompareTest {
    /* @Mock
-    private RestTemplate restTemplate;
+    private RestTemplate reestTemplate;
 */
     @InjectMocks
     private ApiCall apiCall = new ApiCall();
