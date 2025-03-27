@@ -34,7 +34,7 @@ public class CreateCategories {
 
         //Find all Categories
         List<Kategorie> kategories = apicall.getAllCategories();
-        String projectname ="budgetall";
+        String projectname ="alles";
 
 
         kategories.forEach(kategorie -> {

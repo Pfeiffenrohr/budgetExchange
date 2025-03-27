@@ -119,7 +119,7 @@ public class ApiCall {
         headers.add("Authorization", authHeader);
         headers.add("OCS-APIRequest", "true");
         HttpEntity<String> request = new HttpEntity<String>(headers);
-        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("richardlechner.spdns.de")
+        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("h3070648.stratoserver.net")
                 .path("/ocs/v2.php/apps/cospend/api/v1/projects/"+projectId+"/bills").build();
         String url = uriComponents.toUriString();
         ResponseEntity<BillRespond> response = restTemplate.exchange(url, HttpMethod.GET, request, BillRespond.class);
@@ -137,7 +137,7 @@ public class ApiCall {
         headers.add("Authorization", authHeader);
         headers.add("OCS-APIRequest", "true");
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("richardlechner.spdns.de")
+        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("h3070648.stratoserver.net")
                 .path("/ocs/v2.php/apps/cospend/api/v1/projects/"+projectId+"/bills").build();
         String url = uriComponents.toUriString();
         ResponseEntity<String> response = restTemplate.postForEntity(
@@ -160,7 +160,7 @@ public class ApiCall {
         headers.add("Authorization", authHeader);
         headers.add("OCS-APIRequest", "true");
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("richardlechner.spdns.de")
+        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("h3070648.stratoserver.net")
                 .path("/ocs/v2.php/apps/cospend/api/v1/projects/"+projectId+"/bills" + billId).build();
         String url = uriComponents.toUriString();
         ResponseEntity<String> response = restTemplate.exchange(
@@ -183,7 +183,7 @@ public class ApiCall {
         headers.add("Authorization", authHeader);
         headers.add("OCS-APIRequest", "true");
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(headers);
-        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("richardlechner.spdns.de")
+        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("h3070648.stratoserver.net")
                 .path("/ocs/v2.php/apps/cospend/api/v1/projects/"+projectId+" /bills/" + billId).build();
         String url = uriComponents.toUriString();
         try {
@@ -213,11 +213,11 @@ public class ApiCall {
             headers.add("Authorization", authHeader);
             headers.add("OCS-APIRequest", "true");
             MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
-            map.add("token", "wz6hggy5");
+            map.add("token", "i28sw2gn");
             map.add("message", msg);
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-            UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("richardlechner.spdns.de")
-                    .path("/ocs/v2.php/apps/spreed/api/v1/chat/kzuuotjy").build();
+            UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("h3070648.stratoserver.net")
+                    .path("/ocs/v2.php/apps/spreed/api/v1/chat/i28sw2gn").build();
             String url = uriComponents.toUriString();
             ResponseEntity<String> response = restTemplate.postForEntity(
                     url, request, String.class);
@@ -236,7 +236,7 @@ public class ApiCall {
         headers.add("Authorization", authHeader);
         headers.add("OCS-APIRequest", "true");
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("richardlechner.spdns.de")
+        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("h3070648.stratoserver.net")
                 .path("/ocs/v2.php/apps/cospend/api/v1/projects/"+projectId+"/category").build();
         String url = uriComponents.toUriString();
         ResponseEntity<String> response = restTemplate.postForEntity(
