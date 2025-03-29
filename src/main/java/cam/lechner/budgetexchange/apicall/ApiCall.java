@@ -214,10 +214,10 @@ public class ApiCall {
             headers.add("OCS-APIRequest", "true");
             MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
             map.add("token", "i28sw2gn");
-            map.add("message", "Message from exchange: "+msg);
+            map.add("message", msg);
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
             UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("h3070648.stratoserver.net")
-                    .path("/ocs/v2.php/apps/spreed/api/v1/chat/kzuuotjy").build();
+                    .path("/ocs/v2.php/apps/spreed/api/v1/chat/i28sw2gn").build();
             String url = uriComponents.toUriString();
             ResponseEntity<String> response = restTemplate.postForEntity(
                     url, request, String.class);
