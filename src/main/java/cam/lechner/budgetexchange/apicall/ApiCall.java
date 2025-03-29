@@ -103,8 +103,8 @@ public class ApiCall {
         return list;
     }
 
-    public BillRespond getAllBills(RestTemplate restTemplate,String projectId) {
-        LOG.info("Start getAllBillsFromCospend");
+    public BillRespond getAllBills(String projectId) {
+        //LOG.info("Start getAllBillsFromCospend");
         if (host == null) {
             host = "localhost";
         }
