@@ -28,6 +28,9 @@ public class Compare {
     public void doCompare() {
         List<String> projects = new ArrayList<>();
         projects.add("alles");
+        projects.add("as-39-neu");
+        projects.add("wg17neu");
+        projects.add("wg-26-neu");
         projects.forEach(project -> {
         compareCospendBudget(project);
         compareBudgetCospend(project);
