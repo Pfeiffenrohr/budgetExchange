@@ -193,7 +193,7 @@ public class SendBillToCospend {
             return true;
         }
 
-        if (trans.getKategorie() == 39 && isNotMugGrundsteuer(trans)) {
+        if (trans.getKategorie() == 39 && isNotMugGrundsteuer(trans, project)) {
             return true;
         }
 
@@ -207,8 +207,8 @@ public class SendBillToCospend {
         return false;
     }
 
-    private Boolean isNotMugGrundsteuer(Transaktion trans) {
-        if (trans.getName().equals("Grundsteuer Muggensturm")) {
+    private Boolean isNotMugGrundsteuer(Transaktion trans, String project) {
+        if (trans.getName().equals("Grundsteuer Muggensturm") && project.equals("muggensturmneu")) {
             return false;
         }
         return true;
