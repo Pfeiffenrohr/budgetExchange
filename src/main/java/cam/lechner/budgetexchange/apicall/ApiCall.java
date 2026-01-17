@@ -205,6 +205,8 @@ public class ApiCall {
     public void sendMessageToTalk(String msg) {
         try {
             LOG.info("Start sendmessage to talk");
+            return;
+            /*
             String plainCreds = "richard:Thierham123";
             byte[] encodedAuth = Base64.encodeBase64(
                     plainCreds.getBytes(Charset.forName("US-ASCII")), false);
@@ -221,7 +223,7 @@ public class ApiCall {
             String url = uriComponents.toUriString();
             ResponseEntity<String> response = restTemplate.postForEntity(
                     url, request, String.class);
-            String result = response.getBody();
+            String result = response.getBody();*/
         } catch ( Exception ex ) {
             LOG.error("Can not send message to talk " +ex);
         }
