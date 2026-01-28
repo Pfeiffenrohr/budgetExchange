@@ -12,7 +12,7 @@ public class MapKonto {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;
-    private int budgetKontoy;
+    private int budgetKonto;
     private int cospendKonto;
     private String projectname;
 }

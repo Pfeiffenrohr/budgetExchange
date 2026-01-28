@@ -29,7 +29,7 @@ public class KontoService {
                 .orElseGet(() -> {
                     // Dieser Code wird nur ausgeführt, wenn das Optional leer ist (also nichts gefunden wurde)
                     MapKonto defaultKonto = new MapKonto();
-                    defaultKonto.setBudgetKontoy(budgetKonto); // Sinnvoll, den Suchwert zu übernehmen
+                    defaultKonto.setBudgetKonto(budgetKonto); // Sinnvoll, den Suchwert zu übernehmen
                     defaultKonto.setCospendKonto(0); // Hier setzen wir den Standardwert
                     // Die anderen Felder wie 'id' und 'projectname' bleiben null/default
                     return defaultKonto;
