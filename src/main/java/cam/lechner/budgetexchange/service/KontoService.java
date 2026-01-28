@@ -25,7 +25,7 @@ public class KontoService {
      */
     public MapKonto getMapKontoOrDefault(Integer budgetKonto, String projectname) {
         // Rufe die Repository-Methode auf, die ein Optional zurückgibt
-        return mapKontoRepository.findByBudgetKontoAndProject(budgetKonto,projectname)
+        return mapKontoRepository.findByBudgetKontoAndProjectname(budgetKonto,projectname)
                 .orElseGet(() -> {
                     // Dieser Code wird nur ausgeführt, wenn das Optional leer ist (also nichts gefunden wurde)
                     MapKonto defaultKonto = new MapKonto();
