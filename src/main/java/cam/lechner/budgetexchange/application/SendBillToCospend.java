@@ -73,8 +73,8 @@ public class SendBillToCospend {
                         map.add("payedFor", payed_for);
                         map.add("date", tr.getDatum());
                         map.add("categoryId", kat.getCospendCategory() + "");
-                        if (kontoService.getMapKontoOrDefault(tr.getKonto_id()).getCospendKonto() != 0) {
-                            map.add("paymentModeId", kontoService.getMapKontoOrDefault(tr.getKonto_id()).getCospendKonto() + "");
+                        if (kontoService.getMapKontoOrDefault(tr.getKonto_id(),projectId).getCospendKonto() != 0) {
+                            map.add("paymentModeId", kontoService.getMapKontoOrDefault(tr.getKonto_id(),projectId).getCospendKonto() + "");
                         }
                         newtransactionIds.setNextcloudBillId(apicall.sendBill(map, projectId));
                         newtransactionIds.setIsChecked(1);
@@ -97,8 +97,8 @@ public class SendBillToCospend {
                             map.add("date", tr.getDatum());
                             map.add("id", +transactionIds.getNextcloudBillId() + "");
                             map.add("categoryId", kat.getCospendCategory() + "");
-                            if (kontoService.getMapKontoOrDefault(tr.getKonto_id()).getCospendKonto() != 0) {
-                                map.add("paymentModeId", kontoService.getMapKontoOrDefault(tr.getKonto_id()).getCospendKonto() + "");
+                            if (kontoService.getMapKontoOrDefault(tr.getKonto_id(),projectId).getCospendKonto() != 0) {
+                                map.add("paymentModeId", kontoService.getMapKontoOrDefault(tr.getKonto_id(),projectId).getCospendKonto() + "");
                             }
                             apicall.updateBill(map, "/" + transactionIds.getNextcloudBillId(), projectId);
                             if (storedTrans.getKategorie() == tr.getKategorie()) {
