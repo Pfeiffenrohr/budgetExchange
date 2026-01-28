@@ -4,6 +4,7 @@ import cam.lechner.budgetexchange.apicall.ApiCall;
 import cam.lechner.budgetexchange.entity.MapCategory;
 import cam.lechner.budgetexchange.entity.TransactionIds;
 import cam.lechner.budgetexchange.entity.Transaktion;
+import cam.lechner.budgetexchange.service.KontoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,8 @@ public class SendBillToCospend {
     private MapCategoryRepository mapCategoryRepository;
     @Autowired
     private MapMemberRepository mapMemberRepository;
+    @Autowired
+    private KontoService kontoService;
 
     private static final Logger LOG = LoggerFactory.getLogger(SendBillToCospend.class);
 
@@ -70,6 +73,9 @@ public class SendBillToCospend {
                         map.add("payedFor", payed_for);
                         map.add("date", tr.getDatum());
                         map.add("categoryId", kat.getCospendCategory() + "");
+                        if (kontoService.getMapKontoOrDefault(tr.getKonto_id()).getCospendKonto() != 0) {
+                            map.add("paymentModeId", kontoService.getMapKontoOrDefault(tr.getKonto_id()).getCospendKonto() + "");
+                        }
                         newtransactionIds.setNextcloudBillId(apicall.sendBill(map, projectId));
                         newtransactionIds.setIsChecked(1);
                         newtransactionIds.setProjectId(projectId);
@@ -91,6 +97,9 @@ public class SendBillToCospend {
                             map.add("date", tr.getDatum());
                             map.add("id", +transactionIds.getNextcloudBillId() + "");
                             map.add("categoryId", kat.getCospendCategory() + "");
+                            if (kontoService.getMapKontoOrDefault(tr.getKonto_id()).getCospendKonto() != 0) {
+                                map.add("paymentModeId", kontoService.getMapKontoOrDefault(tr.getKonto_id()).getCospendKonto() + "");
+                            }
                             apicall.updateBill(map, "/" + transactionIds.getNextcloudBillId(), projectId);
                             if (storedTrans.getKategorie() == tr.getKategorie()) {
                                 transactionIds.setIsChecked(1);
