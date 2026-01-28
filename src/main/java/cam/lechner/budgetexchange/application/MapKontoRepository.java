@@ -9,5 +9,5 @@ import java.util.Optional; // Wichtig: Optional importieren
 public interface MapKontoRepository extends CrudRepository<MapKonto, Integer>, JpaSpecificationExecutor<MapKonto> {
 
     // Gib ein Optional zurück, um den Fall "nicht gefunden" explizit zu machen
-    Optional<MapKonto> findByBudgetKonto (Integer budgetKonto);
+    Optional<MapKonto> findByBudgetKontoAndProject (Integer budgetKonto, String projectname);
 }
