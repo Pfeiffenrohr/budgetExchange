@@ -29,7 +29,7 @@ public class ApiCallTest {
    private RestTemplate restTemplate;
 
     @InjectMocks
-    private ApiCall apiCall = new ApiCall();
+    private ApiCall apiCall = new ApiCall("true");
 
 
     @Test
