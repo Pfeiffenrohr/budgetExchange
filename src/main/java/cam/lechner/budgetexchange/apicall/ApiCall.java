@@ -38,9 +38,14 @@ public class ApiCall {
     private String host;
     @Value("${budgetserver.port}")
     private String port;
+
+    @Value("${sentToTalk}")
+    private String sendToTalk;
+
     private static final Logger LOG = LoggerFactory.getLogger(ApiCall.class);
 
-    public ApiCall() {
+    public ApiCall(@Value("${sentToTalk}") String sendToTalk) {
+        this.sendToTalk = sendToTalk;
     }
 
     public List<Konto> getAllKonten() {
@@ -204,24 +209,26 @@ public class ApiCall {
 
     public void sendMessageToTalk(String msg) {
         try {
-            LOG.info("Start sendmessage to talk");
-            String plainCreds = "richard:Thierham123";
-            byte[] encodedAuth = Base64.encodeBase64(
-                    plainCreds.getBytes(Charset.forName("US-ASCII")), false);
-            String authHeader = "Basic " + new String(encodedAuth);
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Authorization", authHeader);
-            headers.add("OCS-APIRequest", "true");
-            MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
-            map.add("token", "i28sw2gn");
-            map.add("message", msg);
-            HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-            UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("nextcloud.life-tracker.de")
-                    .path("/ocs/v2.php/apps/spreed/api/v1/chat/i28sw2gn").build();
-            String url = uriComponents.toUriString();
-            ResponseEntity<String> response = restTemplate.postForEntity(
-                    url, request, String.class);
-            String result = response.getBody();
+            if (sendToTalk.equals("true")) {
+                LOG.info("Start sendmessage to talk");
+                String plainCreds = "richard:Thierham123";
+                byte[] encodedAuth = Base64.encodeBase64(
+                        plainCreds.getBytes(Charset.forName("US-ASCII")), false);
+                String authHeader = "Basic " + new String(encodedAuth);
+                HttpHeaders headers = new HttpHeaders();
+                headers.add("Authorization", authHeader);
+                headers.add("OCS-APIRequest", "true");
+                MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
+                map.add("token", "i28sw2gn");
+                map.add("message", msg);
+                HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+                UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("nextcloud.life-tracker.de")
+                        .path("/ocs/v2.php/apps/spreed/api/v1/chat/i28sw2gn").build();
+                String url = uriComponents.toUriString();
+                ResponseEntity<String> response = restTemplate.postForEntity(
+                        url, request, String.class);
+                String result = response.getBody();
+            }
         } catch ( Exception ex ) {
             LOG.error("Can not send message to talk " +ex);
         }

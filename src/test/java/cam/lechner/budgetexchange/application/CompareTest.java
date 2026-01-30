@@ -18,7 +18,7 @@ public class CompareTest {
     private RestTemplate reestTemplate;
 */
     @InjectMocks
-    private ApiCall apiCall = new ApiCall();
+    private ApiCall apiCall = new ApiCall("true");
 
     @Test
     void compareCospendBudgetTest() {
