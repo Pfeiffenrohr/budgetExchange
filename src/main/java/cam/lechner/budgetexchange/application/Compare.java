@@ -32,6 +32,7 @@ public class Compare {
         projects.add("wg17neu");
         projects.add("wg-26-neu");
         projects.add("muggensturmneu");
+        projects.add("budget");
         projects.forEach(project -> {
         compareCospendBudget(project);
         compareBudgetCospend(project);
