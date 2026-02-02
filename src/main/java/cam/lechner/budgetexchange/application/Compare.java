@@ -23,16 +23,13 @@ public class Compare {
     @Autowired
     private CompareRepository compareRepository;
 
+    @Autowired
+    private MapCategoryRepository mapCategoryRepository;
+
     private static final Logger LOG = LoggerFactory.getLogger(Compare.class);
 
     public void doCompare() {
-        List<String> projects = new ArrayList<>();
-        projects.add("alles");
-        projects.add("as-39-neu");
-        projects.add("wg17neu");
-        projects.add("wg-26-neu");
-        projects.add("muggensturmneu");
-        projects.add("budget");
+        List <String> projects = mapCategoryRepository.findDistinctProjectnames();
         projects.forEach(project -> {
         compareCospendBudget(project);
         compareBudgetCospend(project);

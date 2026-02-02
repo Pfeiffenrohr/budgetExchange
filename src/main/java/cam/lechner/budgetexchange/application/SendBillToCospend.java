@@ -52,7 +52,7 @@ public class SendBillToCospend {
         t.forEach(kat -> {
             try {
                 String projectId = kat.getProjectname();
-                List<Transaktion> trans = apicall.getTransactionWithCategoryAndDate(kat.getBudgetCategory() + "", "2013-01-01", formater.format(cal.getTime()));
+                List<Transaktion> trans = apicall.getTransactionWithCategoryAndDate(kat.getBudgetCategory() + "", "2011-01-01", formater.format(cal.getTime()));
                 String payer = getPayer(kat);
                 String payed_for = getPayedFor(kat);
                 for (Transaktion tr : trans) {
