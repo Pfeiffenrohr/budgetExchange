@@ -60,5 +60,5 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/richard/docker/CbudgetNew
-            sudo docker-compose pull cbudgetexchange
-            sudo docker-compose up -d cbudgetexchange
+            docker-compose pull cbudgetexchange
+            docker-compose up -d cbudgetexchange
