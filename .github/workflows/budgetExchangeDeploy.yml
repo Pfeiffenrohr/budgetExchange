@@ -12,15 +12,12 @@ on:
     branches:
       - master
 
-
 permissions:
   contents: read
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
@@ -29,25 +26,37 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
-      # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+        uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582
 
       - name: Build with Gradle Wrapper
         run: ./gradlew build
+
       - name: login to docker hub
-        id: docker-hub
         env:
           username: ${{secrets.DOCKERHUB_USERNAME}}
           password: ${{secrets.DOCKERHUB_PASSWORD}}
         run: |
           docker login -u $username -p $password
+
       - name: build the docker image
-        id: build-docker-image
         run: |
-          ls -la 
           docker build . -f Dockerfile -t pfeiffenrohr/cbudgetexchange:latest
+
       - name: push the docker image
-        id: push-docker-image
         run: docker push ${{secrets.DOCKERHUB_USERNAME}}/cbudgetexchange:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/richard/docker/CbudgetNew
+            docker-compose pull cbudgetexchange
+            docker compose up -d cbudgetexchange
