@@ -61,4 +61,4 @@ jobs:
           script: |
             cd /home/richard/docker/CbudgetNew
             docker-compose pull cbudgetexchange
-            docker-compose up -d cbudgetexchange
+            docker compose up -d cbudgetexchange
