@@ -213,6 +213,11 @@ public class SendBillToCospend {
         if (trans.getKategorie() == 122 && trans.getKonto_id() == 71) {
             return true;
         }
+        if (trans.getKategorie() == 41 && trans.getKonto_id() == 149) {
+            //Sonstige Einnahme bei Monefit soll ignoriert werden. Das ist unschön. Das dient nur dazu die sonsiteg Einname
+            //als passivees Einkommen zu deklarieren.
+            return true;
+        }
         return false;
     }
 
