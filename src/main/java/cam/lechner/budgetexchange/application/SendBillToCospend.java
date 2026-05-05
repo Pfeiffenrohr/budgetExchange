@@ -1,6 +1,7 @@
 package cam.lechner.budgetexchange.application;
 
 import cam.lechner.budgetexchange.apicall.ApiCall;
+import cam.lechner.budgetexchange.entity.Konto;
 import cam.lechner.budgetexchange.entity.MapCategory;
 import cam.lechner.budgetexchange.entity.TransactionIds;
 import cam.lechner.budgetexchange.entity.Transaktion;
@@ -48,6 +49,9 @@ public class SendBillToCospend {
         mapCategoryRepository.findAll().forEach(t::add);
         compareRepository.findAll().forEach(transIds::add);
         compareRepository.setIscheckedTo0();
+        String ANLAGEART = "Geldkonto";
+        Konto konto =apicall.getKontoWithAnlegeart(ANLAGEART).get(0);
+
 
         t.forEach(kat -> {
             try {
@@ -59,6 +63,9 @@ public class SendBillToCospend {
                     TransactionIds transactionIds = new TransactionIds();
                     transactionIds = compareRepository.findByBudgetTransIdAndProjectId(tr.getId(), projectId);
                     if (notToCalculate(tr, projectId)) {
+                        continue;
+                    }
+                    if (tr.getKonto_id() != konto.getId()) {
                         continue;
                     }
                     if (transactionIds == null) {
