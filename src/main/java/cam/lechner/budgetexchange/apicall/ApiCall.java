@@ -42,7 +42,7 @@ public class ApiCall {
     private String nextcloudhost;
     @Value("${nextcloud.user}")
     private String nextclouduser;
-    @Value("${nextcloud.passwort}")
+    @Value("${nextcloud.password}")
     private String nextcloudpassword;
 
     @Value("${sentToTalk}")
