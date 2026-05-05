@@ -50,7 +50,7 @@ public class SendBillToCospend {
         compareRepository.findAll().forEach(transIds::add);
         compareRepository.setIscheckedTo0();
         String ANLAGEART = "Geldkonto";
-        Konto konto =apicall.getKontoWithAnlegeart(ANLAGEART).get(0);
+        List<Konto> kontenWithAnlegeart =apicall.getKontoWithAnlegeart(ANLAGEART);
 
 
         t.forEach(kat -> {
@@ -65,7 +65,7 @@ public class SendBillToCospend {
                     if (notToCalculate(tr, projectId)) {
                         continue;
                     }
-                    if (tr.getKonto_id() != konto.getId()) {
+                    if ( ! hatKontoMitId(kontenWithAnlegeart,tr.getKonto_id())) {
                         continue;
                     }
                     if (transactionIds == null) {
@@ -303,5 +303,13 @@ public class SendBillToCospend {
        } catch (Exception e) {
            LOG.error("Transaktion ID {} kann nicht gelöscht werden !!!", transaktionId);
        }
+    }
+    public boolean hatKontoMitId(List<Konto> konten, Integer id) {
+        for (Konto konto : konten) {
+            if (konto.getId() != null && konto.getId().equals(id)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
