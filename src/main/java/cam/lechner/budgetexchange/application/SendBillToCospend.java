@@ -66,8 +66,8 @@ public class SendBillToCospend {
                         continue;
                     }
                     if ( ! hatKontoMitId(kontenWithAnlegeart,tr.getKonto_id())) {
-                        continue;
-                    }
+
+
                     if (transactionIds == null) {
                         TransactionIds newtransactionIds = new TransactionIds();
                         newtransactionIds.setBudgetTransId(tr.getId());
