@@ -38,6 +38,12 @@ public class ApiCall {
     private String host;
     @Value("${budgetserver.port}")
     private String port;
+    @Value("${nextcloud.host}")
+    private String nextcloudhost;
+    @Value("${nextcloud.user}")
+    private String nextclouduser;
+    @Value("${nextcloud.passwort}")
+    private String nextcloudpassword;
 
     @Value("${sentToTalk}")
     private String sendToTalk;
@@ -108,6 +114,26 @@ public class ApiCall {
         return list;
     }
 
+    public List<Konto> getKontoWithAnlegeart(String anlegeart ) {
+        if (host == null) {
+            host = "localhost";
+        }
+        if (port == null) {
+            port = "8092";
+        }
+        List<Konto> list = new ArrayList<Konto>();
+        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("http").host(host).port(port)
+                .path("//kontoByAnlageart").query("mode=" + anlegeart).build();
+        String transactions = uriComponents.toUriString();
+        ResponseEntity<Konto[]> response = restTemplate.getForEntity(transactions, Konto[].class);
+        if (response.hasBody()) {
+            Konto[] konto = response.getBody();
+            Collections.addAll(list, konto);
+        }
+        return list;
+    }
+
+
     public BillRespond getAllBills(String projectId) {
         //LOG.info("Start getAllBillsFromCospend");
         if (host == null) {
@@ -116,7 +142,7 @@ public class ApiCall {
         if (port == null) {
             port = "8092";
         }
-        String plainCreds = "richard:Thierham123";
+        String plainCreds = nextclouduser+":"+nextcloudpassword;
         byte[] encodedAuth = Base64.encodeBase64(
                 plainCreds.getBytes(Charset.forName("US-ASCII")), false);
         String authHeader = "Basic " + new String(encodedAuth);
@@ -124,7 +150,7 @@ public class ApiCall {
         headers.add("Authorization", authHeader);
         headers.add("OCS-APIRequest", "true");
         HttpEntity<String> request = new HttpEntity<String>(headers);
-        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("nextcloud.life-tracker.de")
+        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host(nextcloudhost)
                 .path("/ocs/v2.php/apps/cospend/api/v1/projects/"+projectId+"/bills").build();
         String url = uriComponents.toUriString();
         ResponseEntity<BillRespond> response = restTemplate.exchange(url, HttpMethod.GET, request, BillRespond.class);
@@ -134,7 +160,7 @@ public class ApiCall {
 
     public Integer sendBill(MultiValueMap map,String projectId) {
         LOG.info("Start sendBillToCospend with bill" + map.get("what"));
-        String plainCreds = "richard:Thierham123";
+        String plainCreds = nextclouduser+":"+nextcloudpassword;
         byte[] encodedAuth = Base64.encodeBase64(
                 plainCreds.getBytes(Charset.forName("US-ASCII")), false);
         String authHeader = "Basic " + new String(encodedAuth);
@@ -142,7 +168,7 @@ public class ApiCall {
         headers.add("Authorization", authHeader);
         headers.add("OCS-APIRequest", "true");
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("nextcloud.life-tracker.de")
+        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host(nextcloudhost)
                 .path("/ocs/v2.php/apps/cospend/api/v1/projects/"+projectId+"/bills").build();
         String url = uriComponents.toUriString();
         ResponseEntity<String> response = restTemplate.postForEntity(
@@ -157,7 +183,7 @@ public class ApiCall {
 
     public Integer updateBill(MultiValueMap map, String billId,String projectId) {
         LOG.info("Update bill" + map.get("what"));
-        String plainCreds = "richard:Thierham123";
+        String plainCreds = nextclouduser+":"+nextcloudpassword;
         byte[] encodedAuth = Base64.encodeBase64(
                 plainCreds.getBytes(Charset.forName("US-ASCII")), false);
         String authHeader = "Basic " + new String(encodedAuth);
@@ -165,7 +191,7 @@ public class ApiCall {
         headers.add("Authorization", authHeader);
         headers.add("OCS-APIRequest", "true");
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("nextcloud.life-tracker.de")
+        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host(nextcloudhost)
                 .path("/ocs/v2.php/apps/cospend/api/v1/projects/"+projectId+"/bills" + billId).build();
         String url = uriComponents.toUriString();
         ResponseEntity<String> response = restTemplate.exchange(
@@ -180,7 +206,7 @@ public class ApiCall {
 
     public Boolean deleteBill(String billId, String projectId) {
         LOG.info("Delete bill in Cospend " + billId);
-        String plainCreds = "richard:Thierham123";
+        String plainCreds = nextclouduser+":"+nextcloudpassword;
         byte[] encodedAuth = Base64.encodeBase64(
                 plainCreds.getBytes(Charset.forName("US-ASCII")), false);
         String authHeader = "Basic " + new String(encodedAuth);
@@ -188,7 +214,7 @@ public class ApiCall {
         headers.add("Authorization", authHeader);
         headers.add("OCS-APIRequest", "true");
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(headers);
-        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("nextcloud.life-tracker.de")
+        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host(nextcloudhost)
                 .path("/ocs/v2.php/apps/cospend/api/v1/projects/"+projectId+" /bills/" + billId).build();
         String url = uriComponents.toUriString();
         try {
@@ -211,7 +237,7 @@ public class ApiCall {
         try {
             if (sendToTalk.equals("true")) {
                 LOG.info("Start sendmessage to talk");
-                String plainCreds = "richard:Thierham123";
+                String plainCreds = nextclouduser+":"+nextcloudpassword;
                 byte[] encodedAuth = Base64.encodeBase64(
                         plainCreds.getBytes(Charset.forName("US-ASCII")), false);
                 String authHeader = "Basic " + new String(encodedAuth);
@@ -222,7 +248,7 @@ public class ApiCall {
                 map.add("token", "i28sw2gn");
                 map.add("message", msg);
                 HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-                UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("nextcloud.life-tracker.de")
+                UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host(nextcloudhost)
                         .path("/ocs/v2.php/apps/spreed/api/v1/chat/i28sw2gn").build();
                 String url = uriComponents.toUriString();
                 ResponseEntity<String> response = restTemplate.postForEntity(
@@ -235,7 +261,7 @@ public class ApiCall {
     }
     public Integer sendCategory(MultiValueMap map,String projectId) {
         LOG.info("Start send Category " + map.get("name"));
-        String plainCreds = "richard:Thierham123";
+        String plainCreds = nextclouduser+":"+nextcloudpassword;
         byte[] encodedAuth = Base64.encodeBase64(
                 plainCreds.getBytes(Charset.forName("US-ASCII")), false);
         String authHeader = "Basic " + new String(encodedAuth);
@@ -243,7 +269,7 @@ public class ApiCall {
         headers.add("Authorization", authHeader);
         headers.add("OCS-APIRequest", "true");
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host("nextcloud.life-tracker.de")
+        UriComponents uriComponents = UriComponentsBuilder.newInstance().scheme("https").host(nextcloudhost)
                 .path("/ocs/v2.php/apps/cospend/api/v1/projects/"+projectId+"/category").build();
         String url = uriComponents.toUriString();
         ResponseEntity<String> response = restTemplate.postForEntity(
