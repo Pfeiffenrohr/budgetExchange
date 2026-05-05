@@ -9,6 +9,7 @@ import cam.lechner.budgetexchange.entity.Transaktion;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -115,51 +116,21 @@ public class ApiCall {
     }
 
     public List<Konto> getKontoWithAnlegeart(String anlageart) {
-        if (host == null) {
-            host = "localhost";
-        }
-        if (port == null) {
-            port = "8092";
-        }
-
-        List<Konto> list = new ArrayList<Konto>();
-
         try {
-            // 1. Schritt: ID über Anlageart abrufen
-            UriComponents uriComponents = UriComponentsBuilder.newInstance()
-                    .scheme("http")
-                    .host(host)
-                    .port(port)
-                    .path("/kontoByAnlageart/{name}")
-                    .buildAndExpand(anlageart);
+            String url = "http://" + host + ":" + port + "/kontoByAnlageart/" + anlageart;
 
-            String idUrl = uriComponents.toUriString();
-            ResponseEntity<Integer> idResponse = restTemplate.getForEntity(idUrl, Integer.class);
+            ResponseEntity<List<Konto>> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<List<Konto>>() {}
+            );
 
-            if (idResponse.hasBody() && idResponse.getBody() != null && idResponse.getBody() > 0) {
-                Integer kontoId = idResponse.getBody();
-
-                // 2. Schritt: Konto mit der ID abrufen
-                UriComponents kontoUriComponents = UriComponentsBuilder.newInstance()
-                        .scheme("http")
-                        .host(host)
-                        .port(port)
-                        .path("/konto/{id}")
-                        .buildAndExpand(kontoId);
-
-                String kontoUrl = kontoUriComponents.toUriString();
-                ResponseEntity<Konto> kontoResponse = restTemplate.getForEntity(kontoUrl, Konto.class);
-
-                if (kontoResponse.hasBody() && kontoResponse.getBody() != null) {
-                    list.add(kontoResponse.getBody());
-                }
-            }
+            return response.getBody() != null ? response.getBody() : new ArrayList<>();
         } catch (Exception e) {
-            System.err.println("Fehler beim Abrufen des Kontos: " + e.getMessage());
-            // Optional: Exception weiterwerfen oder leer Liste zurückgeben
+            System.err.println("Fehler beim Abrufen der Konten: " + e.getMessage());
+            return new ArrayList<>();
         }
-
-        return list;
     }
 
 
