@@ -40,61 +40,38 @@ public class SendBillToCospend {
     private static final Logger LOG = LoggerFactory.getLogger(SendBillToCospend.class);
 
     public void getMissingTransactionsAndSendToCospend() {
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.DATE,cal.getActualMaximum(Calendar.DATE));
-        SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd");
-        List<MapCategory> t = new ArrayList<MapCategory>();
-        List<TransactionIds> transIds = new ArrayList<TransactionIds>();
-        final Boolean[] errorOccured = {false};
-        mapCategoryRepository.findAll().forEach(t::add);
-        compareRepository.findAll().forEach(transIds::add);
-        compareRepository.setIscheckedTo0();
-        String ANLAGEART = "Geldkonto";
-        List<Konto> kontoWithAnlegeart =apicall.getKontoWithAnlegeart(ANLAGEART);
+        try {
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DATE));
+            SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd");
+            List<MapCategory> t = new ArrayList<MapCategory>();
+            List<TransactionIds> transIds = new ArrayList<TransactionIds>();
+            final Boolean[] errorOccured = {false};
+            mapCategoryRepository.findAll().forEach(t::add);
+            compareRepository.findAll().forEach(transIds::add);
+            compareRepository.setIscheckedTo0();
+            String ANLAGEART = "Geldkonto";
+            List<Konto> kontoWithAnlegeart = apicall.getKontoWithAnlegeart(ANLAGEART);
 
 
-        t.forEach(kat -> {
-            try {
-                String projectId = kat.getProjectname();
-                List<Transaktion> trans = apicall.getTransactionWithCategoryAndDate(kat.getBudgetCategory() + "", "2011-01-01", formater.format(cal.getTime()));
-                String payer = getPayer(kat);
-                String payed_for = getPayedFor(kat);
-                for (Transaktion tr : trans) {
-                    TransactionIds transactionIds = new TransactionIds();
-                    transactionIds = compareRepository.findByBudgetTransIdAndProjectId(tr.getId(), projectId);
-                    if (notToCalculate(tr, projectId)) {
-                        continue;
-                    }
-                    if ( ! hatKontoMitId(kontoWithAnlegeart,tr.getKonto_id()))
-                    {
-                        continue;
-                    }
-                    if (transactionIds == null) {
-                        TransactionIds newtransactionIds = new TransactionIds();
-                        newtransactionIds.setBudgetTransId(tr.getId());
-                        MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
-                        map.add("amount", tr.getWert() * kat.getInout() + "");
-                        map.add("what", tr.getName());
-                        map.add("comment", tr.getBeschreibung());
-                        map.add("payer", payer);
-                        map.add("repeat", "n");
-                        map.add("payedFor", payed_for);
-                        map.add("date", tr.getDatum());
-                        map.add("categoryId", kat.getCospendCategory() + "");
-                        if (kontoService.getMapKontoOrDefault(tr.getKonto_id(),projectId).getCospendKonto() != 0) {
-                            map.add("paymentModeId", kontoService.getMapKontoOrDefault(tr.getKonto_id(),projectId).getCospendKonto() + "");
+            t.forEach(kat -> {
+                try {
+                    String projectId = kat.getProjectname();
+                    List<Transaktion> trans = apicall.getTransactionWithCategoryAndDate(kat.getBudgetCategory() + "", "2011-01-01", formater.format(cal.getTime()));
+                    String payer = getPayer(kat);
+                    String payed_for = getPayedFor(kat);
+                    for (Transaktion tr : trans) {
+                        TransactionIds transactionIds = new TransactionIds();
+                        transactionIds = compareRepository.findByBudgetTransIdAndProjectId(tr.getId(), projectId);
+                        if (notToCalculate(tr, projectId)) {
+                            continue;
                         }
-                        newtransactionIds.setNextcloudBillId(apicall.sendBill(map, projectId));
-                        newtransactionIds.setIsChecked(1);
-                        newtransactionIds.setProjectId(projectId);
-                        compareRepository.save(newtransactionIds);
-                        transaktionRepository.save(tr);
-                    } else {
-
-                        Transaktion storedTrans = transaktionRepository.findById(transactionIds.getBudgetTransId()).orElseThrow();
-                        if (!storedTrans.getName().equals(tr.getName())
-                                || storedTrans.getWert() != tr.getWert()
-                                || !storedTrans.getBeschreibung().equals(tr.getBeschreibung())) {
+                        if (!hatKontoMitId(kontoWithAnlegeart, tr.getKonto_id())) {
+                            continue;
+                        }
+                        if (transactionIds == null) {
+                            TransactionIds newtransactionIds = new TransactionIds();
+                            newtransactionIds.setBudgetTransId(tr.getId());
                             MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
                             map.add("amount", tr.getWert() * kat.getInout() + "");
                             map.add("what", tr.getName());
@@ -103,46 +80,73 @@ public class SendBillToCospend {
                             map.add("repeat", "n");
                             map.add("payedFor", payed_for);
                             map.add("date", tr.getDatum());
-                            map.add("id", +transactionIds.getNextcloudBillId() + "");
                             map.add("categoryId", kat.getCospendCategory() + "");
-                            if (kontoService.getMapKontoOrDefault(tr.getKonto_id(),projectId).getCospendKonto() != 0) {
-                                map.add("paymentModeId", kontoService.getMapKontoOrDefault(tr.getKonto_id(),projectId).getCospendKonto() + "");
+                            if (kontoService.getMapKontoOrDefault(tr.getKonto_id(), projectId).getCospendKonto() != 0) {
+                                map.add("paymentModeId", kontoService.getMapKontoOrDefault(tr.getKonto_id(), projectId).getCospendKonto() + "");
                             }
-                            apicall.updateBill(map, "/" + transactionIds.getNextcloudBillId(), projectId);
-                            if (storedTrans.getKategorie() == tr.getKategorie()) {
-                                transactionIds.setIsChecked(1);
-                                compareRepository.save(transactionIds);
-                            }
-                            if (compareRepository.findByBudgetTransIdAndIsChecked(tr.getId(), 0).size() == 0) {
-                                // Die neue Transaktion darf nur gespeichert werden, wenn keine andere Transaktion besteht, die noch updated werden muss.
-                                transaktionRepository.save(tr);
-                            }
+                            newtransactionIds.setNextcloudBillId(apicall.sendBill(map, projectId));
+                            newtransactionIds.setIsChecked(1);
+                            newtransactionIds.setProjectId(projectId);
+                            compareRepository.save(newtransactionIds);
+                            transaktionRepository.save(tr);
                         } else {
-                            if (storedTrans.getKategorie() == tr.getKategorie()) {
-                                transactionIds.setIsChecked(1);
-                                compareRepository.save(transactionIds);
+
+                            Transaktion storedTrans = transaktionRepository.findById(transactionIds.getBudgetTransId()).orElseThrow();
+                            if (!storedTrans.getName().equals(tr.getName())
+                                    || storedTrans.getWert() != tr.getWert()
+                                    || !storedTrans.getBeschreibung().equals(tr.getBeschreibung())) {
+                                MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
+                                map.add("amount", tr.getWert() * kat.getInout() + "");
+                                map.add("what", tr.getName());
+                                map.add("comment", tr.getBeschreibung());
+                                map.add("payer", payer);
+                                map.add("repeat", "n");
+                                map.add("payedFor", payed_for);
+                                map.add("date", tr.getDatum());
+                                map.add("id", +transactionIds.getNextcloudBillId() + "");
+                                map.add("categoryId", kat.getCospendCategory() + "");
+                                if (kontoService.getMapKontoOrDefault(tr.getKonto_id(), projectId).getCospendKonto() != 0) {
+                                    map.add("paymentModeId", kontoService.getMapKontoOrDefault(tr.getKonto_id(), projectId).getCospendKonto() + "");
+                                }
+                                apicall.updateBill(map, "/" + transactionIds.getNextcloudBillId(), projectId);
+                                if (storedTrans.getKategorie() == tr.getKategorie()) {
+                                    transactionIds.setIsChecked(1);
+                                    compareRepository.save(transactionIds);
+                                }
+                                if (compareRepository.findByBudgetTransIdAndIsChecked(tr.getId(), 0).size() == 0) {
+                                    // Die neue Transaktion darf nur gespeichert werden, wenn keine andere Transaktion besteht, die noch updated werden muss.
+                                    transaktionRepository.save(tr);
+                                }
+                            } else {
+                                if (storedTrans.getKategorie() == tr.getKategorie()) {
+                                    transactionIds.setIsChecked(1);
+                                    compareRepository.save(transactionIds);
+                                }
                             }
                         }
-                    }
 
+                    }
+                } catch (Exception e) {
+                    LOG.error(" Exception " + e);
+                    apicall.sendMessageToTalk("@richard [Cospend] !!!! Fehler " + e);
+                    errorOccured[0] = true;
                 }
-            } catch (Exception e) {
-                LOG.error(" Exception " + e);
-                apicall.sendMessageToTalk("@richard [Cospend] !!!! Fehler " +e);
-                errorOccured[0] = true;
-            }
-        });
-        if (!errorOccured[0]) {
-            List<TransactionIds> deleteList = compareRepository.findByIsChecked(0);
-            deleteList.forEach(deleteBill -> {
-                apicall.deleteBill(deleteBill.getNextcloudBillId() + "", deleteBill.getProjectId());
-                compareRepository.delete(deleteBill);
-                deleteSaveTransaktion(deleteBill.getBudgetTransId(), transaktionRepository, compareRepository);
             });
+            if (!errorOccured[0]) {
+                List<TransactionIds> deleteList = compareRepository.findByIsChecked(0);
+                deleteList.forEach(deleteBill -> {
+                    apicall.deleteBill(deleteBill.getNextcloudBillId() + "", deleteBill.getProjectId());
+                    compareRepository.delete(deleteBill);
+                    deleteSaveTransaktion(deleteBill.getBudgetTransId(), transaktionRepository, compareRepository);
+                });
+            }
+        } catch (Exception e) {
+            LOG.error("Allgemeiner Fehler in getMissingTransactionsAndSendToCospend: " + e);
+            apicall.sendMessageToTalk("@richard [Cospend] !!!! Allgemeiner Fehler " + e);
         }
     }
 
-    private String getPayer(MapCategory map) throws Exception {
+    String getPayer(MapCategory map) throws Exception {
 
         if (map.getKind() == 0) {
             //Miete
@@ -177,7 +181,7 @@ public class SendBillToCospend {
         return "";
     }
 
-    private Boolean notToCalculate(Transaktion trans, String project) {
+    Boolean notToCalculate(Transaktion trans, String project) {
         //Rentenversicherung soll nicht beachtet werden !!!
         if (trans.getKonto_id() == 12 || trans.getKonto_id() == 142 || trans.getKonto_id() == 30 || trans.getKonto_id() == 17) {
             return true;
