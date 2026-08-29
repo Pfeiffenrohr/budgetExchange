@@ -195,6 +195,10 @@ public class SendBillToCospend {
             //Alles was Kategorie Rücklagen ist und nocht Konto Sprkasse Giro 2
             return true;
         }
+        if (trans.getKategorie() == 27 ) {
+            //Sparen soll nicht gesynced werden
+            return true;
+        }
         if (trans.getKategorie() == 155 && trans.getKonto_id() == 92) {
             //Alles was Kategorie Ahornstrasse 39 ist und Konto Haus Ahornstr. 39
             return true;
